@@ -28,7 +28,24 @@ export const getAllTasks = (sort = null, search = null) => {
     });
   }
   
-  return result;
+  return result
+}
+
+// GET STATS
+export const getTaskStats = () => {
+  const total = tasks.length;
+  const pendentes = tasks.filter(t => !t.concluida).length;
+  const concluidas = tasks.filter(t => t.concluida).length;
+  const percentagemPendentes = total > 0 ? (pendentes / total * 100).toFixed(2) : "0.00";
+  const percentagemConcluidas = total > 0 ? (concluidas / total * 100).toFixed(2) : "0.00";
+
+  return {
+    total,
+    pendentes, 
+    concluidas,
+    percentagemPendentes,
+    percentagemConcluidas
+  }
 }
 
 // POST

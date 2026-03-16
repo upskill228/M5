@@ -7,6 +7,12 @@ export const getUsers = (req, res) => {
     res.json(users);
 };
 
+// Get STATS
+export const getUserStats = (req, res) => {
+  const stats = userService.getUserStats();
+  res.json(stats);
+};
+
 export const createUser = (req, res) => {
   try {
     const newUser = userService.createUser(req.body);

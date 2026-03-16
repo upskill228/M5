@@ -7,6 +7,12 @@ export const getTasks = (req, res) => {
     res.json(tasks);
 };
 
+// GET STATS
+
+export const getTaskStats = (req, res) => {
+  const stats = taskService.getTaskStats();
+  res.json(stats);
+};
 
 export const createTask = (req, res) => {
   try {

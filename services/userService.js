@@ -27,6 +27,24 @@ export const getAllUsers = (sort = null, search = null) => {
   return result;
 }
 
+// GET USER BY ID
+export const getUserById = (id) => {
+  return users.find(u => u.id == id);
+}
+
+// GET STATS
+export const getUserStats = () => {
+  const total = users.length;
+  const ativos = users.filter(u => u.ativo).length;
+  const percentagemAtivos = total > 0 ? (ativos / total * 100).toFixed(2) : "0.00";
+
+  return {
+    total,
+    ativos,
+    percentagemAtivos
+  };
+};
+
 // POST
 export const createUser = (userData) => {
   const newUser = {
