@@ -48,6 +48,11 @@ export const getTaskStats = () => {
   }
 }
 
+// GET TASK BY ID
+export const getTaskById = (id) => {
+  return tasks.find(t => t.id == id);
+}
+
 // POST
 export const createTask = (taskData) => {
   const newTask = {
