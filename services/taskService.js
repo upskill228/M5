@@ -5,25 +5,24 @@ let tasks = [
 ];
 
 // GET
-export const getAllTasks = () => {
-  return tasks;
+export const getAllTasks = (sort = null) => {
+  let result = [...tasks];
+  
+  if (sort && (sort === 'asc' || sort === 'desc')) {
+    result.sort((a, b) => {
+      if (sort === 'asc') {
+        return a.titulo.localeCompare(b.titulo);
+      } else {
+        return b.titulo.localeCompare(a.titulo);
+      }
+    });
+  }
+  
+  return result;
 }
 
 // POST
 export const createTask = (taskData) => {
-
-  if (!taskData.titulo) {
-    throw new Error("Title is required");
-  }
-  
-  if (taskData.titulo.length < 3) {
-    throw new Error("Title must be at least 3 characters");
-  }
-
-  if (!taskData.responsavelNome) {
-  throw new Error("responsavelNome is required");
-}
-
   const newTask = {
     id: tasks.length + 1,
     titulo: taskData.titulo,
@@ -48,16 +47,24 @@ export const updateTask = (id, taskData) => {
   task.concluida = taskData.concluida ?? task.concluida;
   task.responsavelNome = taskData.responsavelNome ?? task.responsavelNome;
 
-  if (taskData.dataConclusao) {
-    task.dataConclusao = taskData.dataConclusao;
-  } else if (taskData.dataConclusao === null) {
-    task.dataConclusao = undefined;
-  }
+  if (taskData.concluida !== undefined) {
+  task.concluida = taskData.concluida;
+  task.dataConclusao = task.concluida ? new Date() : undefined;
+}
 
   return task;
+}
+
+export const getTaskCounts = () => {
+  const total = tasks.length;
+  const pendentes = tasks.filter(t => !t.concluida).length;
+  const concluidas = tasks.filter(t => t.concluida).length;
+  return { total, pendentes, concluidas };
 }
 
 // DELETE
 export const deleteTask = (id) => {
   tasks = tasks.filter(t => t.id != id);
+  return getTaskCounts();
 }
+

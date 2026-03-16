@@ -5,17 +5,24 @@ let users = [
 ];
 
 // GET
-export const getAllUsers = () => {
-  return users;
+export const getAllUsers = (sort = null) => {
+  let result = [...users];
+  
+  if (sort && (sort === 'asc' || sort === 'desc')) {
+    result.sort((a, b) => {
+      if (sort === 'asc') {
+        return a.nome.localeCompare(b.nome);
+      } else {
+        return b.nome.localeCompare(a.nome);
+      }
+    });
+  }
+  
+  return result;
 }
 
 // POST
 export const createUser = (userData) => {
-
-  if (!userData.email || !userData.email.includes("@")) {
-    throw new Error("Invalid email");
-  }
-
   const newUser = {
     id: users.length + 1,
     nome: userData.nome,
