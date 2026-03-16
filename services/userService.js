@@ -36,7 +36,7 @@ export const getUserById = (id) => {
 export const getUserStats = () => {
   const total = users.length;
   const ativos = users.filter(u => u.ativo).length;
-  const percentagemAtivos = total > 0 ? (ativos / total * 100).toFixed(2) : "0.00";
+  const percentagemAtivos = total > 0 ? Number((ativos / total * 100).toFixed(2)) : 0;
 
   return {
     total,
