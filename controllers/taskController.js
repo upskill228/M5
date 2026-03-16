@@ -2,7 +2,8 @@ import * as taskService from "../services/taskService.js";
 
 export const getTasks = (req, res) => {
     const sort = req.query.sort;
-    const tasks = taskService.getAllTasks(sort);
+    const search = req.query.search;
+    const tasks = taskService.getAllTasks(sort, search);
     res.json(tasks);
 };
 

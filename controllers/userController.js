@@ -2,7 +2,8 @@ import * as userService from "../services/userService.js";
 
 export const getUsers = (req, res) => {
     const sort = req.query.sort;
-    const users = userService.getAllUsers(sort);
+    const search = req.query.search;
+    const users = userService.getAllUsers(sort, search);
     res.json(users);
 };
 
