@@ -4,10 +4,20 @@ let tasks = [
     { id: 3, titulo: "Lavar o carro", categoria: "pessoal", concluida: false, responsavelNome: "Maria Santos" , dataConclusao: undefined}
 ];
 
+// Endpoints: GET /users?search=nome, GET /tasks?search=titulo
+
+// Dicas: Usar filter() para retornar apenas os itens que contêm o termo pesquisado
+
 // GET
-export const getAllTasks = (sort = null) => {
+export const getAllTasks = (sort = null, search = null) => {
   let result = [...tasks];
   
+  // Aplicar filtro de pesquisa primeiro
+  if (search) {
+    result = result.filter(t => t.titulo.toLowerCase().includes(search.toLowerCase()));
+  }
+  
+  // Depois aplicar ordenação
   if (sort && (sort === 'asc' || sort === 'desc')) {
     result.sort((a, b) => {
       if (sort === 'asc') {

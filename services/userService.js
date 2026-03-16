@@ -5,9 +5,15 @@ let users = [
 ];
 
 // GET
-export const getAllUsers = (sort = null) => {
+export const getAllUsers = (sort = null, search = null) => {
   let result = [...users];
   
+  // Aplicar filtro de pesquisa primeiro
+  if (search) {
+    result = result.filter(u => u.nome.toLowerCase().includes(search.toLowerCase()));
+  }
+  
+  // Depois aplicar ordenação
   if (sort && (sort === 'asc' || sort === 'desc')) {
     result.sort((a, b) => {
       if (sort === 'asc') {
