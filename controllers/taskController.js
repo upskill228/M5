@@ -1,7 +1,8 @@
 import * as taskService from "../services/taskService.js";
 
 export const getTasks = (req, res) => {
-    const tasks = taskService.getAllTasks();
+    const sort = req.query.sort;
+    const tasks = taskService.getAllTasks(sort);
     res.json(tasks);
 };
 
@@ -25,6 +26,6 @@ export const updateTask = (req, res) => {
 };
 
 export const deleteTask = (req, res) => {
-    taskService.deleteTask(req.params.id);
-    res.json({ message: "Task deleted" });
+    const counts = taskService.deleteTask(req.params.id);
+    res.json({ message: "Task deleted", counts });
 };

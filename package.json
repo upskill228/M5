@@ -14,5 +14,16 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/upskill228/M5.git"
+  },
+  "bugs": {
+    "url": "https://github.com/upskill228/M5/issues"
+  },
+  "homepage": "https://github.com/upskill228/M5#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
