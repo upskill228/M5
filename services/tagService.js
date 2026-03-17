@@ -6,8 +6,6 @@ let tags = [
    { id: 3, nome: "Melhoria" },
 ];
 
-let taskTags = [];
-
 // GET
 export const getAllTags = () => {
   return [...tags];

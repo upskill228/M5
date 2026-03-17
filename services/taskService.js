@@ -4,16 +4,20 @@ let tasks = [
     { id: 3, titulo: "Lavar o carro", categoria: "pessoal", concluida: false, responsavelNome: "Maria Santos" , dataConclusao: undefined}
 ];
 
+let taskTags = [];
+
+import * as tagService from "./tagService.js";
+
 // GET
 export const getAllTasks = (sort = null, search = null) => {
   let result = [...tasks];
   
-  // Aplicar filtro de pesquisa primeiro
+  // Aplicar filtro de pesquisa
   if (search) {
     result = result.filter(t => t.titulo.toLowerCase().includes(search.toLowerCase()));
   }
   
-  // Depois aplicar ordenação
+  // Aplicar ordenação
   if (sort && (sort === 'asc' || sort === 'desc')) {
     result.sort((a, b) => {
       if (sort === 'asc') {
@@ -65,6 +69,29 @@ export const createTask = (taskData) => {
   tasks.push(newTask);
   return newTask;
 }
+
+// POST - Adicionar tag a uma tarefa
+export const addTagToTask = (taskId, tagId) => {
+  const task = tasks.find(t => t.id == taskId);
+  if (!task) {
+    throw new Error("Task not found");
+  }
+
+  const tag = tagService.getTagById(tagId);
+  if (!tag) {
+    throw new Error("Tag not found");
+  }
+
+  // Verificar se a associação já existe
+  const associacaoExiste = taskTags.find(tt => tt.taskId == taskId && tt.tagId == tagId);
+  if (associacaoExiste) {
+    throw new Error("This tag is already associated with this task");
+  }
+
+  const novaAssociacao = { taskId, tagId };
+  taskTags.push(novaAssociacao);
+  return novaAssociacao;
+};
 
 // PUT
 export const updateTask = (id, taskData) => {
