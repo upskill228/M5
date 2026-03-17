@@ -1,3 +1,7 @@
+import * as tagService from "./tagService.js";
+import * as commentService from "./commentService.js";
+import { generateNextId } from "../utils/validators.js";
+
 let tasks = [
     { id: 1, titulo: "Estudar Node.js", categoria: "trabalho", concluida: false, responsavelNome: "Daniel Moraes" , dataConclusao: undefined},
     { id: 2, titulo: "Comprar pão", categoria: "pessoal", concluida: false, responsavelNome: "Ana Silva" , dataConclusao: undefined},
@@ -5,8 +9,6 @@ let tasks = [
 ];
 
 let taskTags = [];
-
-import * as tagService from "./tagService.js";
 
 // GET
 export const getAllTasks = (sort = null, search = null) => {
@@ -55,9 +57,7 @@ export const getTaskById = (id) => {
 
 // POST
 export const createTask = (taskData) => {
-  let nextId = tasks.length > 0
-    ? Math.max(...tasks.map(t => t.id)) + 1
-    : 1;
+  let nextId = generateNextId(tasks);
   const newTask = {
     id: nextId,
     titulo: taskData.titulo,
@@ -138,5 +138,10 @@ export const getTasksByTagId = (tagId) => {
   return associations.map(association => {
     return tasks.find(t => t.id == association.taskId);
   }).filter(task => task !== undefined);
+}
+
+// GET COMMENTS BY TASK ID
+export const getCommentsByTaskId = (taskId) => {
+  return commentService.getCommentsByTaskId(taskId);
 }
 

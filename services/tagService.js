@@ -1,4 +1,4 @@
-import { isEmpty } from "../utils/validators.js";
+import { isEmpty, generateNextId } from "../utils/validators.js";
 import * as taskService from "./taskService.js";
 
 let tags = [
@@ -22,9 +22,7 @@ export const createTag = (tagData) => {
     if (isEmpty(tagData.nome)) {
         throw new Error("Nome is required");
     }
-    let nextId = tags.length > 0
-      ? Math.max(...tags.map(t => t.id)) + 1
-      : 1;
+    let nextId = generateNextId(tags);
     const newTag = {
         id: nextId,
         nome: tagData.nome,

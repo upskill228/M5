@@ -47,9 +47,7 @@ export const getUserStats = () => {
 
 // POST
 export const createUser = (userData) => {
-  let nextId = users.length > 0
-    ? Math.max(...users.map(u => u.id)) + 1
-    : 1;
+    let nextId = generateNextId(users);
   const newUser = {
     id: nextId,
     nome: userData.nome,

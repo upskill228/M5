@@ -15,6 +15,22 @@ export const getTaskStats = (req, res) => {
   res.json(stats);
 };
 
+// GET TASK BY ID
+export const getTaskById = (req, res) => {
+  const task = taskService.getTaskById(req.params.id);
+  if (task) {
+    res.json(task);
+  } else {
+    res.status(404).json({ error: "Task not found" });
+  }
+};
+
+// GET TASK COMMENTS
+export const getTaskComments = (req, res) => {
+  const comments = taskService.getCommentsByTaskId(req.params.id);
+  res.json(comments);
+}; 
+
 // POST
 export const createTask = (req, res) => {
   try {
