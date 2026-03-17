@@ -3,7 +3,7 @@ import { isEmpty } from "../utils/validators.js";
 export const validateTagId = (req, res, next) => {
   const { tagId } = req.body;
 
-  if (tagId === undefined || tagId === null) {
+  if (isEmpty(tagId)) {
     return res.status(400).json({ error: "tagId is required" });
   }
 
