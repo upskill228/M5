@@ -51,8 +51,11 @@ export const getTaskById = (id) => {
 
 // POST
 export const createTask = (taskData) => {
+  let nextId = tasks.length > 0
+    ? Math.max(...tasks.map(t => t.id)) + 1
+    : 1;
   const newTask = {
-    id: tasks.length + 1,
+    id: nextId,
     titulo: taskData.titulo,
     categoria: taskData.categoria,
     concluida: false,

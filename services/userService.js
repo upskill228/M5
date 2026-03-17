@@ -47,8 +47,11 @@ export const getUserStats = () => {
 
 // POST
 export const createUser = (userData) => {
+  let nextId = users.length > 0
+    ? Math.max(...users.map(u => u.id)) + 1
+    : 1;
   const newUser = {
-    id: users.length + 1,
+    id: nextId,
     nome: userData.nome,
     email: userData.email,
     ativo: true
