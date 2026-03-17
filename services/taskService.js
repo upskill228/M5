@@ -70,7 +70,7 @@ export const createTask = (taskData) => {
   return newTask;
 }
 
-// POST - Adicionar tag a uma tarefa
+// POST - TAG TO TASK
 export const addTagToTask = (taskId, tagId) => {
   const task = tasks.find(t => t.id == taskId);
   if (!task) {
@@ -113,6 +113,7 @@ export const updateTask = (id, taskData) => {
   return task;
 }
 
+// GET COUNTS
 export const getTaskCounts = () => {
   const total = tasks.length;
   const pendentes = tasks.filter(t => !t.concluida).length;
