@@ -121,9 +121,22 @@ export const getTaskCounts = () => {
   return { total, pendentes, concluidas };
 }
 
-// DELETE
+// DELETE TASK
 export const deleteTask = (id) => {
   tasks = tasks.filter(t => t.id != id);
   return getTaskCounts();
+}
+
+// REMOVE TAG ASSOCIATIONS
+export const removeTagAssociations = (tagId) => {
+  taskTags = taskTags.filter(taskTag => taskTag.tagId !== tagId);
+}
+
+// GET TASKS BY TAG
+export const getTasksByTagId = (tagId) => {
+  const associations = taskTags.filter(tt => tt.tagId == tagId);
+  return associations.map(association => {
+    return tasks.find(t => t.id == association.taskId);
+  }).filter(task => task !== undefined);
 }
 

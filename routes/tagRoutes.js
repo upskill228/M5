@@ -6,6 +6,7 @@ import { checkTagExists } from "../middlewares/checkTagExists.js";
 const router = express.Router();
 
 router.get("/", tagController.getTags);
+router.get("/:id/tasks", checkTagExists, tagController.getTagTasks);
 router.post("/", validateCreateTag, tagController.createTag);
 router.delete("/:id", checkTagExists, tagController.deleteTag);
 

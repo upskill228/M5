@@ -1,4 +1,5 @@
 import { isEmpty } from "../utils/validators.js";
+import * as taskService from "./taskService.js";
 
 let tags = [
    { id: 1, nome: "Urgente" },
@@ -40,6 +41,6 @@ export const deleteTag = (id) => {
   }
   tags = tags.filter(u => u.id !== id);
   // Remover associações no array taskTags
-  taskTags = taskTags.filter(taskTag => taskTag.tagId !== id);
+  taskService.removeTagAssociations(id);
   return tagToDelete;
 }
