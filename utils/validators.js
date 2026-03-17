@@ -3,7 +3,7 @@ export const isEmpty = (value) => {
   return !value || value.trim() === "";
 };
 
-// valida título com tamanho mínimo
+// valida campo com tamanho mínimo
 export const isMinLength = (value, min) => {
   return value.trim().length >= min;
 };
