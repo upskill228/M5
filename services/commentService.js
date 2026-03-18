@@ -2,7 +2,7 @@ import { isEmpty, generateNextId } from "../utils/validators.js";
 import * as taskService from "./taskService.js";
 import * as userService from "./userService.js";
 
-const comments = [
+let comments = [
   { id: 1, taskId: 1, userId: 2, content: "This task is essential for the project", creationDate: new Date("2024-01-15") },
   { id: 2, taskId: 1, userId: 3, content: "I agree, we should start this soon", creationDate: new Date("2024-01-16") },
   { id: 3, taskId: 2, userId: 1, content: "Can someone help with this?", creationDate: new Date("2024-01-17") },
