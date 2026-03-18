@@ -43,3 +43,10 @@ export const getCommentsByTaskId = (taskId) => {
   const taskComments = comments.filter(c => c.taskId == taskId);
   return taskComments.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
 };
+
+// REMOVE COMMENTS BY TASK ID
+export const removeCommentsByTaskId = (taskId) => {
+  const removedCount = comments.filter(c => c.taskId == taskId).length;
+  comments = comments.filter(c => c.taskId !== taskId);
+  return removedCount;
+};

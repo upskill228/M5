@@ -127,6 +127,13 @@ export const getTaskCounts = () => {
 
 // DELETE TASK
 export const deleteTask = (id) => {
+  // Remove comments associated with this task
+  commentService.removeCommentsByTaskId(id);
+  
+  // Remove tag associations with this task
+  taskTags = taskTags.filter(tt => tt.taskId !== id);
+  
+  // Remove the task itself
   tasks = tasks.filter(t => t.id != id);
   return getTaskCounts();
 }
