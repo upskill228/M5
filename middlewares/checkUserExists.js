@@ -6,7 +6,7 @@ export const checkUserExists = (req, res, next) => {
   const user = userService.getUserById(userId);
 
   if (!user) {
-    return res.status(404).json({ error: "Utilizador não encontrado" });
+    return res.status(404).json({ error: "User not found" });
   }
 
   req.user = user;

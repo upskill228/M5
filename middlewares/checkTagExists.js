@@ -6,7 +6,7 @@ export const checkTagExists = (req, res, next) => {
   const tag = tagService.getTagById(tagId);
 
   if (!tag) {
-    return res.status(404).json({ error: "Tag não encontrada" });
+    return res.status(404).json({ error: "Tag not found" });
   }
 
   req.tag = tag;

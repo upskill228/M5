@@ -1,25 +1,25 @@
 let users = [
-  { id: 1, nome: "Ana Silva", email: "ana@email.com", ativo: true },
-  { id: 2, nome: "João Costa", email: "joao@email.com", ativo: true },
-  { id: 3, nome: "Maria Santos", email: "maria@email.com", ativo: false }
+  { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },
+  { id: 2, name: "João Costa", email: "joao@email.com", active: true },
+  { id: 3, name: "Maria Santos", email: "maria@email.com", active: false }
 ];
 
 // GET USERS
 export const getAllUsers = (sort = null, search = null) => {
   let result = [...users];
   
-  // Aplicar filtro de pesquisa primeiro
+  // Apply search filter first
   if (search) {
-    result = result.filter(u => u.nome.toLowerCase().includes(search.toLowerCase()));
+    result = result.filter(u => u.name.toLowerCase().includes(search.toLowerCase()));
   }
   
-  // Depois aplicar ordenação
+  // Then apply sorting
   if (sort && (sort === 'asc' || sort === 'desc')) {
     result.sort((a, b) => {
       if (sort === 'asc') {
-        return a.nome.localeCompare(b.nome);
+        return a.name.localeCompare(b.name);
       } else {
-        return b.nome.localeCompare(a.nome);
+        return b.name.localeCompare(a.name);
       }
     });
   }
@@ -35,13 +35,13 @@ export const getUserById = (id) => {
 // GET STATS
 export const getUserStats = () => {
   const total = users.length;
-  const ativos = users.filter(u => u.ativo).length;
-  const percentagemAtivos = total > 0 ? Number((ativos / total * 100).toFixed(2)) : 0;
+  const active = users.filter(u => u.active).length;
+  const activePercentage = total > 0 ? Number((active / total * 100).toFixed(2)) : 0;
 
   return {
     total,
-    ativos,
-    percentagemAtivos
+    active,
+    activePercentage
   };
 };
 
@@ -50,9 +50,9 @@ export const createUser = (userData) => {
     let nextId = generateNextId(users);
   const newUser = {
     id: nextId,
-    nome: userData.nome,
+    name: userData.name,
     email: userData.email,
-    ativo: true
+    active: true
   };
   users.push(newUser);
   return newUser;
@@ -65,22 +65,21 @@ export const updateUser = (id, userData) => {
     throw new Error("User not found");
   }
 
-  user.nome = userData.nome ?? user.nome;
+  user.name = userData.name ?? user.name;
   user.email = userData.email ?? user.email;
-  user.ativo = userData.ativo ?? user.ativo;
+  user.active = userData.active ?? user.active;
 
   return user;
 }
 
 // PATCH ACTIVE/INACTIVE
-
 export const toggleUserActive = (id) => {
   const user = users.find(u => u.id == id);
   if (!user) {
     throw new Error("User not found");
   }
 
-  user.ativo = !user.ativo;
+  user.active = !user.active;
   return user;
 }
 

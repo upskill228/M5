@@ -2,9 +2,9 @@ import { isEmpty, generateNextId } from "../utils/validators.js";
 import * as taskService from "./taskService.js";
 
 let tags = [
-   { id: 1, nome: "Urgente" },
-   { id: 2, nome: "Bug" },
-   { id: 3, nome: "Melhoria" },
+   { id: 1, name: "Urgent" },
+   { id: 2, name: "Bug" },
+   { id: 3, name: "Enhancement" },
 ];
 
 // GET TAGS
@@ -19,13 +19,13 @@ export const getTagById = (id) => {
 
 // POST TAG
 export const createTag = (tagData) => {
-    if (isEmpty(tagData.nome)) {
-        throw new Error("Nome is required");
+    if (isEmpty(tagData.name)) {
+        throw new Error("Name is required");
     }
     let nextId = generateNextId(tags);
     const newTag = {
         id: nextId,
-        nome: tagData.nome,
+        name: tagData.name,
     };
     tags.push(newTag);
     return newTag;
@@ -38,7 +38,7 @@ export const deleteTag = (id) => {
     throw new Error("Tag not found");
   }
   tags = tags.filter(u => u.id !== id);
-  // Remover associações no array taskTags
+  // Remove associations in taskTags array
   taskService.removeTagAssociations(id);
   return tagToDelete;
 }

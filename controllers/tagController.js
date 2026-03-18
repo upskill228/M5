@@ -23,7 +23,7 @@ export const deleteTag = (req, res) => {
     res.json(tag);
 };
 
-// GET TASKS ASSOCIATED WITH A TAG
+// GET TASKS WITH TAG
 export const getTagTasks = (req, res) => {
     const tasks = taskService.getTasksByTagId(req.params.id);
     res.json(tasks);

@@ -6,7 +6,7 @@ export const checkTaskExists = (req, res, next) => {
   const task = taskService.getTaskById(taskId);
 
   if (!task) {
-    return res.status(404).json({ error: "Tarefa não encontrada" });
+    return res.status(404).json({ error: "Task not found" });
   }
 
   req.task = task;

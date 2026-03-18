@@ -1,10 +1,10 @@
 import { isEmpty } from "../utils/validators.js";
 
 export const validateCreateTag = (req, res, next) => {
-  const { nome } = req.body;
+  const { name } = req.body;
 
-  if (isEmpty(nome)) {
-    return res.status(400).json({ error: "Nome is required" });
+  if (isEmpty(name)) {
+    return res.status(400).json({ error: "Name is required" });
   }
 
   next();

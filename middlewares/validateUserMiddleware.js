@@ -1,10 +1,10 @@
 import { isEmpty, isValidEmail } from "../utils/validators.js";
 
 export const validateCreateUser = (req, res, next) => {
-  const { nome, email } = req.body;
+  const { name, email } = req.body;
 
-  if (isEmpty(nome)) {
-    return res.status(400).json({ error: "Nome is required" });
+  if (isEmpty(name)) {
+    return res.status(400).json({ error: "Name is required" });
   }
 
   if (!isValidEmail(email)) {
@@ -15,18 +15,18 @@ export const validateCreateUser = (req, res, next) => {
 };
 
 export const validateUpdateUser = (req, res, next) => {
-  const { nome, email, ativo } = req.body;
+  const { name, email, active } = req.body;
 
-  if (nome !== undefined && isEmpty(nome)) {
-    return res.status(400).json({ error: "Nome cannot be empty" });
+  if (name !== undefined && isEmpty(name)) {
+    return res.status(400).json({ error: "Name cannot be empty" });
   }
 
   if (email !== undefined && !isValidEmail(email)) {
     return res.status(400).json({ error: "Invalid email" });
   }
 
-  if (ativo !== undefined && typeof ativo !== "boolean") {
-    return res.status(400).json({ error: "Ativo must be a boolean" });
+  if (active !== undefined && typeof active !== "boolean") {
+    return res.status(400).json({ error: "Active must be a boolean" });
   }
 
   next();

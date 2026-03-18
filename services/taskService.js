@@ -3,29 +3,33 @@ import * as commentService from "./commentService.js";
 import { generateNextId } from "../utils/validators.js";
 
 let tasks = [
-    { id: 1, titulo: "Estudar Node.js", categoria: "trabalho", concluida: false, responsavelNome: "Daniel Moraes" , dataConclusao: undefined},
-    { id: 2, titulo: "Comprar pão", categoria: "pessoal", concluida: false, responsavelNome: "Ana Silva" , dataConclusao: undefined},
-    { id: 3, titulo: "Lavar o carro", categoria: "pessoal", concluida: false, responsavelNome: "Maria Santos" , dataConclusao: undefined}
+    { id: 1, title: "Study Node.js", category: "work", completed: false, responsibleName: "Daniel Moraes", completionDate: undefined},
+    { id: 2, title: "Buy bread", category: "personal", completed: false, responsibleName: "Ana Silva", completionDate: undefined},
+    { id: 3, title: "Wash the car", category: "personal", completed: false, responsibleName: "Maria Santos", completionDate: undefined}
 ];
 
-let taskTags = [];
+let taskTags = [
+  { taskId: 1, tagId: 1 },  // Study Node.js → Urgent
+  { taskId: 1, tagId: 3 },  // Study Node.js → Enhancement
+  { taskId: 2, tagId: 1 },  // Buy bread → Urgent
+];
 
 // GET TASKS
 export const getAllTasks = (sort = null, search = null) => {
   let result = [...tasks];
   
-  // Aplicar filtro de pesquisa
+  // Apply search filter
   if (search) {
-    result = result.filter(t => t.titulo.toLowerCase().includes(search.toLowerCase()));
+    result = result.filter(t => t.title.toLowerCase().includes(search.toLowerCase()));
   }
   
-  // Aplicar ordenação
+  // Apply sorting
   if (sort && (sort === 'asc' || sort === 'desc')) {
     result.sort((a, b) => {
       if (sort === 'asc') {
-        return a.titulo.localeCompare(b.titulo);
+        return a.title.localeCompare(b.title);
       } else {
-        return b.titulo.localeCompare(a.titulo);
+        return b.title.localeCompare(a.title);
       }
     });
   }
@@ -36,17 +40,17 @@ export const getAllTasks = (sort = null, search = null) => {
 // GET STATS
 export const getTaskStats = () => {
   const total = tasks.length;
-  const pendentes = tasks.filter(t => !t.concluida).length;
-  const concluidas = tasks.filter(t => t.concluida).length;
-  const percentagemPendentes = total > 0 ? (pendentes / total * 100).toFixed(2) : "0.00";
-  const percentagemConcluidas = total > 0 ? (concluidas / total * 100).toFixed(2) : "0.00";
+  const pending = tasks.filter(t => !t.completed).length;
+  const completed = tasks.filter(t => t.completed).length;
+  const pendingPercentage = total > 0 ? (pending / total * 100).toFixed(2) : "0.00";
+  const completedPercentage = total > 0 ? (completed / total * 100).toFixed(2) : "0.00";
 
   return {
     total,
-    pendentes, 
-    concluidas,
-    percentagemPendentes,
-    percentagemConcluidas
+    pending, 
+    completed,
+    pendingPercentage,
+    completedPercentage
   }
 }
 
@@ -60,11 +64,11 @@ export const createTask = (taskData) => {
   let nextId = generateNextId(tasks);
   const newTask = {
     id: nextId,
-    titulo: taskData.titulo,
-    categoria: taskData.categoria,
-    concluida: false,
-    responsavelNome: taskData.responsavelNome,
-    dataConclusao: undefined
+    title: taskData.title,
+    category: taskData.category,
+    completed: false,
+    responsibleName: taskData.responsibleName,
+    completionDate: undefined
   };
   tasks.push(newTask);
   return newTask;
@@ -82,15 +86,15 @@ export const addTagToTask = (taskId, tagId) => {
     throw new Error("Tag not found");
   }
 
-  // Verificar se a associação já existe
-  const associacaoExiste = taskTags.find(tt => tt.taskId == taskId && tt.tagId == tagId);
-  if (associacaoExiste) {
+  // Check if association already exists
+  const associationExists = taskTags.find(tt => tt.taskId == taskId && tt.tagId == tagId);
+  if (associationExists) {
     throw new Error("This tag is already associated with this task");
   }
 
-  const novaAssociacao = { taskId, tagId };
-  taskTags.push(novaAssociacao);
-  return novaAssociacao;
+  const newAssociation = { taskId, tagId };
+  taskTags.push(newAssociation);
+  return newAssociation;
 };
 
 // PUT TASK
@@ -100,14 +104,14 @@ export const updateTask = (id, taskData) => {
     throw new Error("Task not found");
   }
 
-  task.titulo = taskData.titulo ?? task.titulo;
-  task.categoria = taskData.categoria ?? task.categoria;
-  task.concluida = taskData.concluida ?? task.concluida;
-  task.responsavelNome = taskData.responsavelNome ?? task.responsavelNome;
+  task.title = taskData.title ?? task.title;
+  task.category = taskData.category ?? task.category;
+  task.completed = taskData.completed ?? task.completed;
+  task.responsibleName = taskData.responsibleName ?? task.responsibleName;
 
-  if (taskData.concluida !== undefined) {
-  task.concluida = taskData.concluida;
-  task.dataConclusao = task.concluida ? new Date() : undefined;
+  if (taskData.completed !== undefined) {
+  task.completed = taskData.completed;
+  task.completionDate = task.completed ? new Date() : undefined;
 }
 
   return task;
@@ -116,9 +120,9 @@ export const updateTask = (id, taskData) => {
 // GET TASK COUNTS
 export const getTaskCounts = () => {
   const total = tasks.length;
-  const pendentes = tasks.filter(t => !t.concluida).length;
-  const concluidas = tasks.filter(t => t.concluida).length;
-  return { total, pendentes, concluidas };
+  const pending = tasks.filter(t => !t.completed).length;
+  const completed = tasks.filter(t => t.completed).length;
+  return { total, pending, completed };
 }
 
 // DELETE TASK

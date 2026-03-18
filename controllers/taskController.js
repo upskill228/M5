@@ -24,7 +24,7 @@ export const createTask = (req, res) => {
   }
 };
 
-// POST - Add tag to task
+// POST - ADD TAG TO TASK
 export const addTagToTask = (req, res) => {
   try { 
     const associacao = taskService.addTagToTask(req.params.id, req.body.tagId);
