@@ -67,7 +67,14 @@ export const updateUser = (id, userData) => {
 
   user.name = userData.name ?? user.name;
   user.email = userData.email ?? user.email;
-  user.active = userData.active ?? user.active;
+  
+  // ACTIVE VALIDATION
+  if (userData.active !== undefined) {
+    if (typeof userData.active !== "boolean") {
+      throw new Error("Active must be a boolean");
+    }
+    user.active = userData.active;
+  }
 
   return user;
 }
