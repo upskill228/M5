@@ -28,10 +28,10 @@ http://localhost:3000
 
 # Principais decisões tomadas e justificação da adequação
 
-O projeto foi desenvolvido com base nos enunciados "guiados_04.html" e "projeto_01.html".  
+O projeto foi desenvolvido com base nos enunciados "guiados_04.html" e "projeto_01.html".
 As funcionalidades e a estrutura da aplicação foram implementadas de acordo com os requisitos definidos nesses exercícios.
 
-Do ponto de vista funcional, poderiam ser adicionadas outras funcionalidades e melhorias. No entanto, o principal objetivo foi cumprir os requisitos definidos nos enunciados. Desta forma tentou-se manter um código limpo, organizado e sem redundâncias, privilegiando boas práticas como a reutilização e a clareza.
+Do ponto de vista funcional, poderiam ser adicionadas outras funcionalidades e melhorias. No entanto, o foco principal foi cumprir os requisitos dos enunciados, mantendo um código limpo, organizado e sem redundâncias, privilegiando boas práticas como reutilização e clareza.
 
 A aplicação segue uma estrutura modular, o que facilita a manutenção, organização e possível evolução futura do código, permitindo também uma melhor separação de responsabilidades.
 
