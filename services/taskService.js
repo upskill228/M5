@@ -10,7 +10,7 @@ let tasks = [
 
 let taskTags = [];
 
-// GET
+// GET TASKS
 export const getAllTasks = (sort = null, search = null) => {
   let result = [...tasks];
   
@@ -55,7 +55,7 @@ export const getTaskById = (id) => {
   return tasks.find(t => t.id == id);
 }
 
-// POST
+// POST TASK
 export const createTask = (taskData) => {
   let nextId = generateNextId(tasks);
   const newTask = {
@@ -70,7 +70,7 @@ export const createTask = (taskData) => {
   return newTask;
 }
 
-// POST - TAG TO TASK
+// POST - ADD TAG TO TASK
 export const addTagToTask = (taskId, tagId) => {
   const task = tasks.find(t => t.id == taskId);
   if (!task) {
@@ -93,7 +93,7 @@ export const addTagToTask = (taskId, tagId) => {
   return novaAssociacao;
 };
 
-// PUT
+// PUT TASK
 export const updateTask = (id, taskData) => {
   const task = tasks.find(t => t.id == id);
   if (!task) {
@@ -113,7 +113,7 @@ export const updateTask = (id, taskData) => {
   return task;
 }
 
-// GET COUNTS
+// GET TASK COUNTS
 export const getTaskCounts = () => {
   const total = tasks.length;
   const pendentes = tasks.filter(t => !t.concluida).length;

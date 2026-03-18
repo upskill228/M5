@@ -7,17 +7,17 @@ let tags = [
    { id: 3, nome: "Melhoria" },
 ];
 
-// GET
+// GET TAGS
 export const getAllTags = () => {
   return [...tags];
 }
 
-// GET BY ID
+// GET TAG BY ID
 export const getTagById = (id) => {
   return tags.find(t => t.id == id);
 }
 
-// POST
+// POST TAG
 export const createTag = (tagData) => {
     if (isEmpty(tagData.nome)) {
         throw new Error("Nome is required");
@@ -31,7 +31,7 @@ export const createTag = (tagData) => {
     return newTag;
 }
 
-// DELETE
+// DELETE TAG
 export const deleteTag = (id) => {
   const tagToDelete = tags.find(u => u.id === id);
   if (!tagToDelete) {

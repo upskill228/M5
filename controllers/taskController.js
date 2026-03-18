@@ -1,7 +1,6 @@
 import * as taskService from "../services/taskService.js";
 
-// GET
-
+// GET TASKS
 export const getTasks = (req, res) => {
     const sort = req.query.sort;
     const search = req.query.search;
@@ -15,23 +14,7 @@ export const getTaskStats = (req, res) => {
   res.json(stats);
 };
 
-// GET TASK BY ID
-export const getTaskById = (req, res) => {
-  const task = taskService.getTaskById(req.params.id);
-  if (task) {
-    res.json(task);
-  } else {
-    res.status(404).json({ error: "Task not found" });
-  }
-};
-
-// GET TASK COMMENTS
-export const getTaskComments = (req, res) => {
-  const comments = taskService.getCommentsByTaskId(req.params.id);
-  res.json(comments);
-}; 
-
-// POST
+// POST TASK
 export const createTask = (req, res) => {
   try {
     const newTask = taskService.createTask(req.body);
@@ -41,7 +24,7 @@ export const createTask = (req, res) => {
   }
 };
 
-// POST - Adicionar tag a uma tarefa
+// POST - Add tag to task
 export const addTagToTask = (req, res) => {
   try { 
     const associacao = taskService.addTagToTask(req.params.id, req.body.tagId);
@@ -51,7 +34,7 @@ export const addTagToTask = (req, res) => {
   }
 };
 
-// PUT
+// PUT TASK
 export const updateTask = (req, res) => {
   try {
     const task = taskService.updateTask(req.params.id, req.body);
@@ -61,7 +44,7 @@ export const updateTask = (req, res) => {
   }
 };
 
-// DELETE
+// DELETE TASK
 export const deleteTask = (req, res) => {
     const counts = taskService.deleteTask(req.params.id);
     res.json({ message: "Task deleted", counts });

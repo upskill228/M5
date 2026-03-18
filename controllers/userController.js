@@ -1,5 +1,6 @@
 import * as userService from "../services/userService.js";
 
+// GET USERS
 export const getUsers = (req, res) => {
     const sort = req.query.sort;
     const search = req.query.search;
@@ -7,12 +8,13 @@ export const getUsers = (req, res) => {
     res.json(users);
 };
 
-// Get STATS
+// GET STATS
 export const getUserStats = (req, res) => {
   const stats = userService.getUserStats();
   res.json(stats);
 };
 
+// POST USER
 export const createUser = (req, res) => {
   try {
     const newUser = userService.createUser(req.body);
@@ -22,6 +24,7 @@ export const createUser = (req, res) => {
   }
 };
 
+// PUT USER
 export const updateUser = (req, res) => {
   try {
     const user = userService.updateUser(req.params.id, req.body);
@@ -31,6 +34,7 @@ export const updateUser = (req, res) => {
   }
 };
 
+// TOGGLE USER ACTIVE
 export const toggleUserActive = (req, res) => {
   try {
     const user = userService.toggleUserActive(req.params.id);
@@ -40,6 +44,7 @@ export const toggleUserActive = (req, res) => {
   }
 }
 
+// DELETE USER
 export const deleteUser = (req, res) => {
     userService.deleteUser(req.params.id);
     res.json({ message: "User deleted" });

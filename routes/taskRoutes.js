@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get("/", taskController.getTasks);
 router.get("/stats", taskController.getTaskStats);
-router.get("/:id/comments", checkTaskExists, taskController.getTaskComments);
+router.get("/:id/comments", checkTaskExists, commentController.getCommentsByTaskId);
 router.post("/", validateCreateTask, taskController.createTask);
 router.post("/:id/tags", checkTaskExists, validateTagId, taskController.addTagToTask);
 router.post("/:id/comments", checkTaskExists, commentController.createComment);

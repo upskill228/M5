@@ -4,7 +4,7 @@ let users = [
   { id: 3, nome: "Maria Santos", email: "maria@email.com", ativo: false }
 ];
 
-// GET
+// GET USERS
 export const getAllUsers = (sort = null, search = null) => {
   let result = [...users];
   
@@ -45,7 +45,7 @@ export const getUserStats = () => {
   };
 };
 
-// POST
+// POST USER
 export const createUser = (userData) => {
     let nextId = generateNextId(users);
   const newUser = {
@@ -58,7 +58,7 @@ export const createUser = (userData) => {
   return newUser;
 }
 
-// PUT
+// PUT USER
 export const updateUser = (id, userData) => {
   const user = users.find(u => u.id == id);
   if (!user) {
@@ -85,7 +85,7 @@ export const toggleUserActive = (id) => {
 }
 
 
-// DELETE
+// DELETE USER
 export const deleteUser = (id) => {
   users = users.filter(u => u.id != id);
 }

@@ -4,7 +4,7 @@ import * as userService from "./userService.js";
 
 const comments = [];
 
-// POST
+// POST COMMENT
 export const createComment = (taskId, commentData) => {
   const task = taskService.getTaskById(taskId);
   if (!task) {

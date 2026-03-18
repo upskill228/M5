@@ -1,6 +1,6 @@
 import * as commentService from "../services/commentService.js";
 
-// GET
+// GET COMMENTS BY TASK ID
 export const getCommentsByTaskId = (req, res) => {
   try {
     const comments = commentService.getCommentsByTaskId(req.params.id);
@@ -10,7 +10,7 @@ export const getCommentsByTaskId = (req, res) => {
   }
 };
 
-// POST
+// POST COMMENT
 export const createComment = (req, res) => {
   try {
     const comment = commentService.createComment(req.params.id, req.body);
