@@ -9,6 +9,139 @@ Main
 # Principais decisões tomadas e justificação da adequação
 
 Em termos de estrutura, este projeto seguiu os enunciados "guiados_04.html" e "projeto_01.html".
-Como nos módulos anteriores foi-nos sugerido que o código deveria em escrito em inglês, houve uma tentativa de uniformização e por isso alguma informação / daos dos enunciados foram mudados.
-Desta forma, "nome" foi sustituído por "name", etc.
+Como nos módulos anteriores foi-nos sugerido que o código deveria em escrito em inglês, houve uma tentativa de uniformização e por isso alguma informação / dados dos enunciados foram mudados.
+Desta forma, "nome" foi substituído por "name", "ativo" por "active", etc.
 
+## 🛠️ Tecnologias Utilizadas
+- **Node.js** com **Express.js**
+- **JavaScript (ES6+)** - módulos
+- JSON para serialização
+
+## 📁 Estrutura do Projeto
+
+```
+M5/
+├── app.js                          # Servidor principal
+├── controllers/                    # Lógica de resposta HTTP
+│   ├── userController.js
+│   ├── taskController.js
+│   ├── tagController.js
+│   └── commentController.js
+├── services/                       # Lógica de negócio + dados
+│   ├── userService.js
+│   ├── taskService.js
+│   ├── tagService.js
+│   └── commentService.js
+├── routes/                         # Definição de endpoints
+│   ├── userRoutes.js
+│   ├── taskRoutes.js
+│   └── tagRoutes.js
+├── middlewares/                    # Validação e verificação
+│   ├── validateUserMiddleware.js
+│   ├── validateTaskMiddleware.js
+│   ├── validateTagMiddleware.js
+│   ├── checkUserExists.js
+│   ├── checkTaskExists.js
+│   ├── checkTagExists.js
+│   └── loggerMiddleware.js
+├── utils/                          # Funções auxiliares
+│   └── validators.js
+└── package.json
+```
+
+## 🚀 Como Executar
+
+1. **Instalar dependências:**
+   ```bash
+   npm install
+   ```
+
+2. **Iniciar servidor:**
+   ```bash
+   node app.js
+   ```
+
+3. **Servidor estará disponível em:**
+   ```
+   http://localhost:3000
+   ```
+
+## 📡 Endpoints Principais
+
+### Users
+- `GET /users` - Listar todos os utilizadores
+- `GET /users?sort=asc|desc` - Ordenar por nome
+- `GET /users?search=name` - Pesquisar por nome
+- `GET /users/stats` - Estatísticas de utilizadores
+- `POST /users` - Criar novo utilizador
+- `PUT /users/:id` - Atualizar utilizador
+- `PATCH /users/:id` - Alternar ativo/inativo
+- `DELETE /users/:id` - Remover utilizador
+
+### Tasks
+- `GET /tasks` - Listar todas as tarefas
+- `GET /tasks?sort=asc|desc` - Ordenar por título
+- `GET /tasks?search=title` - Pesquisar por título
+- `GET /tasks/stats` - Estatísticas de tarefas
+- `POST /tasks` - Criar nova tarefa
+- `PUT /tasks/:id` - Atualizar tarefa
+- `DELETE /tasks/:id` - Remover tarefa
+
+### Tags
+- `GET /tags` - Listar todas as tags
+- `POST /tags` - Criar nova tag
+- `DELETE /tags/:id` - Remover tag
+- `GET /tags/:id/tasks` - Listar tarefas de uma tag
+
+### Comentários
+- `GET /tasks/:id/comments` - Listar comentários de uma tarefa
+- `POST /tasks/:id/comments` - Adicionar comentário a uma tarefa
+
+### Tags em Tarefas
+- `POST /tasks/:id/tags` - Associar tag a uma tarefa
+
+## 💾 Dados de Exemplo
+
+O projeto inclui dados simulados:
+- **3 utilizadores** com emails
+- **3 tarefas** com diferentes categorias
+- **3 tags** (Urgent, Bug, Enhancement)
+- **4 comentários** associados às tarefas
+- **3 associações** task-tag (relação N:N)
+
+## 📊 Estatísticas
+
+| Recurso | Quantidade |
+|---------|-----------|
+| Endpoints | 25+ |
+| Controllers | 4 |
+| Services | 4 |
+| Middlewares | 7 |
+| Utilizadores | 3 |
+| Tarefas | 3 |
+| Tags | 3 |
+| Comentários | 4 |
+
+## ✅ Funcionalidades Implementadas
+
+✔ CRUD completo para Users, Tasks, Tags
+✔ Relações 1:N (Comments → Tasks)
+✔ Relações N:N (Tags ↔ Tasks)
+✔ Ordenação (asc/desc)
+✔ Pesquisa por texto
+✔ Estatísticas dinâmicas
+✔ Validação de dados
+✔ Middlewares customizados
+✔ Geração automática de IDs
+✔ Remoção cascata de dados relacionados
+
+## 🎓 Conceitos Aprendidos
+
+- Arquitetura REST
+- Estrutura de projetos Node.js
+- Express.js e middlewares
+- Validação de dados
+- Relações entre recursos
+- Métodos HTTP (GET, POST, PUT, PATCH, DELETE)
+- Ordenação e filtragem
+- Geração de IDs automáticos
