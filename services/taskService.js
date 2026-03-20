@@ -1,18 +1,19 @@
+import { db } from "../db.js";
 import * as tagService from "./tagService.js";
 import * as commentService from "./commentService.js";
 import { generateNextId } from "../utils/validators.js";
 
-let tasks = [
-    { id: 1, title: "Study Node.js", category: "work", completed: false, responsibleName: "Daniel Moraes", completionDate: undefined},
-    { id: 2, title: "Buy bread", category: "personal", completed: false, responsibleName: "Ana Silva", completionDate: undefined},
-    { id: 3, title: "Wash the car", category: "personal", completed: false, responsibleName: "Maria Santos", completionDate: undefined}
-];
+// let tasks = [
+//     { id: 1, title: "Study Node.js", category: "work", completed: false, responsibleName: "Daniel Moraes", completionDate: undefined},
+//     { id: 2, title: "Buy bread", category: "personal", completed: false, responsibleName: "Ana Silva", completionDate: undefined},
+//     { id: 3, title: "Wash the car", category: "personal", completed: false, responsibleName: "Maria Santos", completionDate: undefined}
+// ];
 
-let taskTags = [
-  { taskId: 1, tagId: 1 },  // Study Node.js → Urgent
-  { taskId: 1, tagId: 3 },  // Study Node.js → Enhancement
-  { taskId: 2, tagId: 1 },  // Buy bread → Urgent
-];
+// let taskTags = [
+//   { taskId: 1, tagId: 1 },  // Study Node.js → Urgent
+//   { taskId: 1, tagId: 3 },  // Study Node.js → Enhancement
+//   { taskId: 2, tagId: 1 },  // Buy bread → Urgent
+// ];
 
 // GET TASKS
 export const getAllTasks = (sort = null, search = null) => {

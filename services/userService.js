@@ -1,25 +1,27 @@
-let users = [
-  { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },
-  { id: 2, name: "João Costa", email: "joao@email.com", active: true },
-  { id: 3, name: "Maria Santos", email: "maria@email.com", active: false }
-];
+import { db } from "../db.js";
+
+// let users = [
+//   { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },
+//   { id: 2, name: "João Costa", email: "joao@email.com", active: true },
+//   { id: 3, name: "Maria Santos", email: "maria@email.com", active: false }
+// ];
 
 // GET USERS
-export const getAllUsers = (sort = null, search = null) => {
-  let result = [...users];
+export const getAllUsers = async (sort = null, search = null) => {
+  let [result] = await db.query("SELECT * FROM utilizadores");
   
   // Apply search filter first
   if (search) {
-    result = result.filter(u => u.name.toLowerCase().includes(search.toLowerCase()));
+    result = result.filter(u => u.nome.toLowerCase().includes(search.toLowerCase()));
   }
   
   // Then apply sorting
   if (sort && (sort === 'asc' || sort === 'desc')) {
     result.sort((a, b) => {
       if (sort === 'asc') {
-        return a.name.localeCompare(b.name);
+        return a.nome.localeCompare(b.nome);
       } else {
-        return b.name.localeCompare(a.name);
+        return b.nome.localeCompare(a.nome);
       }
     });
   }

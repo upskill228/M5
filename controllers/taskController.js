@@ -2,10 +2,14 @@ import * as taskService from "../services/taskService.js";
 
 // GET TASKS
 export const getTasks = (req, res) => {
+  try {
     const sort = req.query.sort;
     const search = req.query.search;
     const tasks = taskService.getAllTasks(sort, search);
     res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // GET STATS

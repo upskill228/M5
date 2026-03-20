@@ -1,11 +1,11 @@
 import { isEmpty, generateNextId } from "../utils/validators.js";
 import * as taskService from "./taskService.js";
 
-let tags = [
-   { id: 1, name: "Urgent" },
-   { id: 2, name: "Bug" },
-   { id: 3, name: "Enhancement" },
-];
+// let tags = [
+//    { id: 1, name: "Urgent" },
+//    { id: 2, name: "Bug" },
+//    { id: 3, name: "Enhancement" },
+// ];
 
 // GET TAGS
 export const getAllTags = () => {

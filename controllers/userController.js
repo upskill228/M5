@@ -2,10 +2,14 @@ import * as userService from "../services/userService.js";
 
 // GET USERS
 export const getUsers = (req, res) => {
+  try {
     const sort = req.query.sort;
     const search = req.query.search;
     const users = userService.getAllUsers(sort, search);
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // GET STATS
