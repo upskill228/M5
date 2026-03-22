@@ -13,6 +13,7 @@ export const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
+// ------------------- APAGAR DEPOIS
 // Generates next ID based on array
 export const generateNextId = (array) => {
   return array.length > 0

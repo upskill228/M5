@@ -1,7 +1,7 @@
 import { db } from "../db.js";
-import * as tagService from "./tagService.js";
-import * as commentService from "./commentService.js";
-import { generateNextId } from "../utils/validators.js";
+// import * as tagService from "./tagService.js";
+// import * as commentService from "./commentService.js";
+// import { generateNextId } from "../utils/validators.js";
 
 // let tasks = [
 //     { id: 1, title: "Study Node.js", category: "work", completed: false, responsibleName: "Daniel Moraes", completionDate: undefined},
@@ -16,144 +16,174 @@ import { generateNextId } from "../utils/validators.js";
 // ];
 
 // GET TASKS
-export const getAllTasks = (sort = null, search = null) => {
-  let result = [...tasks];
-  
-  // Apply search filter
+export const getTasks = async (sort = null, search = null) => {
+  let query = `
+    SELECT
+      id,
+      titulo AS title,
+      categoria AS category,
+      completa AS completed,
+      id_utilizador AS responsibleName,
+    FROM tarefas
+    `;
+  const params = [];
+  const conditions = [];
+
   if (search) {
-    result = result.filter(t => t.title.toLowerCase().includes(search.toLowerCase()));
-  }
-  
-  // Apply sorting
-  if (sort && (sort === 'asc' || sort === 'desc')) {
-    result.sort((a, b) => {
-      if (sort === 'asc') {
-        return a.title.localeCompare(b.title);
-      } else {
-        return b.title.localeCompare(a.title);
-      }
-    });
-  }
-  
-  return result
-}
-
-// GET STATS
-export const getTaskStats = () => {
-  const total = tasks.length;
-  const pending = tasks.filter(t => !t.completed).length;
-  const completed = tasks.filter(t => t.completed).length;
-  const pendingPercentage = total > 0 ? (pending / total * 100).toFixed(2) : "0.00";
-  const completedPercentage = total > 0 ? (completed / total * 100).toFixed(2) : "0.00";
-
-  return {
-    total,
-    pending, 
-    completed,
-    pendingPercentage,
-    completedPercentage
-  }
-}
-
-// GET TASK BY ID
-export const getTaskById = (id) => {
-  return tasks.find(t => t.id == id);
-}
-
-// POST TASK
-export const createTask = (taskData) => {
-  let nextId = generateNextId(tasks);
-  const newTask = {
-    id: nextId,
-    title: taskData.title,
-    category: taskData.category,
-    completed: false,
-    responsibleName: taskData.responsibleName,
-    completionDate: undefined
-  };
-  tasks.push(newTask);
-  return newTask;
-}
-
-// POST - ADD TAG TO TASK
-export const addTagToTask = (taskId, tagId) => {
-  const task = tasks.find(t => t.id == taskId);
-  if (!task) {
-    throw new Error("Task not found");
+    conditions.push("title LIKE ?");
+    params.push(`%${search}%`);
   }
 
-  const tag = tagService.getTagById(tagId);
-  if (!tag) {
-    throw new Error("Tag not found");
+  if (conditions.length > 0) {
+    query += " WHERE " + conditions.join(" AND ");
   }
 
-  // Check if association already exists
-  const associationExists = taskTags.find(tt => tt.taskId == taskId && tt.tagId == tagId);
-  if (associationExists) {
-    throw new Error("This tag is already associated with this task");
+  if (sort && (sort === "asc" || sort === "desc")) {
+    query += ` ORDER BY title ${sort.toUpperCase()}`;
   }
 
-  const newAssociation = { taskId, tagId };
-  taskTags.push(newAssociation);
-  return newAssociation;
+  const [result] = await db.query(query, params);
+  return result;
 };
 
-// PUT TASK
-export const updateTask = (id, taskData) => {
-  const task = tasks.find(t => t.id == id);
-  if (!task) {
-    throw new Error("Task not found");
-  }
-
-  task.title = taskData.title ?? task.title;
-  task.category = taskData.category ?? task.category;
-  task.completed = taskData.completed ?? task.completed;
-  task.responsibleName = taskData.responsibleName ?? task.responsibleName;
-
-  if (taskData.completed !== undefined) {
-  task.completed = taskData.completed;
-  task.completionDate = task.completed ? new Date() : undefined;
-}
-
-  return task;
-}
-
-// GET TASK COUNTS
-export const getTaskCounts = () => {
-  const total = tasks.length;
-  const pending = tasks.filter(t => !t.completed).length;
-  const completed = tasks.filter(t => t.completed).length;
-  return { total, pending, completed };
-}
-
-// DELETE TASK
-export const deleteTask = (id) => {
-  // Remove comments associated with this task
-  commentService.removeCommentsByTaskId(id);
+// export const getAllTasks = (sort = null, search = null) => {
+//   let result = [...tasks];
   
-  // Remove tag associations with this task
-  taskTags = taskTags.filter(tt => tt.taskId !== id);
+//   // Apply search filter
+//   if (search) {
+//     result = result.filter(t => t.title.toLowerCase().includes(search.toLowerCase()));
+//   }
   
-  // Remove the task itself
-  tasks = tasks.filter(t => t.id != id);
-  return getTaskCounts();
-}
+//   // Apply sorting
+//   if (sort && (sort === 'asc' || sort === 'desc')) {
+//     result.sort((a, b) => {
+//       if (sort === 'asc') {
+//         return a.title.localeCompare(b.title);
+//       } else {
+//         return b.title.localeCompare(a.title);
+//       }
+//     });
+//   }
+  
+//   return result
+// }
 
-// REMOVE TAG ASSOCIATIONS
-export const removeTagAssociations = (tagId) => {
-  taskTags = taskTags.filter(taskTag => taskTag.tagId !== tagId);
-}
+// GET STATS
+// export const getTaskStats = () => {
+//   const total = tasks.length;
+//   const pending = tasks.filter(t => !t.completed).length;
+//   const completed = tasks.filter(t => t.completed).length;
+//   const pendingPercentage = total > 0 ? (pending / total * 100).toFixed(2) : "0.00";
+//   const completedPercentage = total > 0 ? (completed / total * 100).toFixed(2) : "0.00";
 
-// GET TASKS BY TAG
-export const getTasksByTagId = (tagId) => {
-  const associations = taskTags.filter(tt => tt.tagId == tagId);
-  return associations.map(association => {
-    return tasks.find(t => t.id == association.taskId);
-  }).filter(task => task !== undefined);
-}
+//   return {
+//     total,
+//     pending, 
+//     completed,
+//     pendingPercentage,
+//     completedPercentage
+//   }
+// }
 
-// GET COMMENTS BY TASK ID
-export const getCommentsByTaskId = (taskId) => {
-  return commentService.getCommentsByTaskId(taskId);
-}
+// // GET TASK BY ID
+// export const getTaskById = (id) => {
+//   return tasks.find(t => t.id == id);
+// }
+
+// // POST TASK
+// export const createTask = (taskData) => {
+//   let nextId = generateNextId(tasks);
+//   const newTask = {
+//     id: nextId,
+//     title: taskData.title,
+//     category: taskData.category,
+//     completed: false,
+//     responsibleName: taskData.responsibleName,
+//     completionDate: undefined
+//   };
+//   tasks.push(newTask);
+//   return newTask;
+// }
+
+// // POST - ADD TAG TO TASK
+// export const addTagToTask = (taskId, tagId) => {
+//   const task = tasks.find(t => t.id == taskId);
+//   if (!task) {
+//     throw new Error("Task not found");
+//   }
+
+//   const tag = tagService.getTagById(tagId);
+//   if (!tag) {
+//     throw new Error("Tag not found");
+//   }
+
+//   // Check if association already exists
+//   const associationExists = taskTags.find(tt => tt.taskId == taskId && tt.tagId == tagId);
+//   if (associationExists) {
+//     throw new Error("This tag is already associated with this task");
+//   }
+
+//   const newAssociation = { taskId, tagId };
+//   taskTags.push(newAssociation);
+//   return newAssociation;
+// };
+
+// // PUT TASK
+// export const updateTask = (id, taskData) => {
+//   const task = tasks.find(t => t.id == id);
+//   if (!task) {
+//     throw new Error("Task not found");
+//   }
+
+//   task.title = taskData.title ?? task.title;
+//   task.category = taskData.category ?? task.category;
+//   task.completed = taskData.completed ?? task.completed;
+//   task.responsibleName = taskData.responsibleName ?? task.responsibleName;
+
+//   if (taskData.completed !== undefined) {
+//   task.completed = taskData.completed;
+//   task.completionDate = task.completed ? new Date() : undefined;
+// }
+
+//   return task;
+// }
+
+// // GET TASK COUNTS
+// export const getTaskCounts = () => {
+//   const total = tasks.length;
+//   const pending = tasks.filter(t => !t.completed).length;
+//   const completed = tasks.filter(t => t.completed).length;
+//   return { total, pending, completed };
+// }
+
+// // DELETE TASK
+// export const deleteTask = (id) => {
+//   // Remove comments associated with this task
+//   commentService.removeCommentsByTaskId(id);
+  
+//   // Remove tag associations with this task
+//   taskTags = taskTags.filter(tt => tt.taskId !== id);
+  
+//   // Remove the task itself
+//   tasks = tasks.filter(t => t.id != id);
+//   return getTaskCounts();
+// }
+
+// // REMOVE TAG ASSOCIATIONS
+// export const removeTagAssociations = (tagId) => {
+//   taskTags = taskTags.filter(taskTag => taskTag.tagId !== tagId);
+// }
+
+// // GET TASKS BY TAG
+// export const getTasksByTagId = (tagId) => {
+//   const associations = taskTags.filter(tt => tt.tagId == tagId);
+//   return associations.map(association => {
+//     return tasks.find(t => t.id == association.taskId);
+//   }).filter(task => task !== undefined);
+// }
+
+// // GET COMMENTS BY TASK ID
+// export const getCommentsByTaskId = (taskId) => {
+//   return commentService.getCommentsByTaskId(taskId);
+// }
 

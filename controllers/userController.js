@@ -1,55 +1,59 @@
 import * as userService from "../services/userService.js";
+import { ValidationError } from "../utils/validationError.js";
 
 // GET USERS
-export const getUsers = (req, res) => {
+export const getUsers = async (req, res) => {
   try {
-    const sort = req.query.sort;
-    const search = req.query.search;
-    const users = userService.getAllUsers(sort, search);
+    const users = await userService.getAllUsersDB();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// GET STATS
-export const getUserStats = (req, res) => {
-  const stats = userService.getUserStats();
-  res.json(stats);
-};
-
 // POST USER
-export const createUser = (req, res) => {
-  try {
-    const newUser = userService.createUser(req.body);
+export const createUser = async (req, res) => {
+  try { 
+    const { name, email, active } = req.body;
+    const newUser = await userService.createUserDB(name, email, active);
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(error instanceof ValidationError ? 400 : 500)
+       .json({ error: error.message });
   }
 };
 
 // PUT USER
-export const updateUser = (req, res) => {
+export const updateUser = async (req, res) => {
   try {
-    const user = userService.updateUser(req.params.id, req.body);
-    res.json(user);
+    const { id } = req.params;
+    const { name, email, active } = req.body;
+
+    const result = await userService.updateUserDB(id, name, email, active);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "User updated" });
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(error instanceof ValidationError ? 400 : 500)
+       .json({ error: error.message });
   }
 };
 
-// TOGGLE USER ACTIVE
-export const toggleUserActive = (req, res) => {
-  try {
-    const user = userService.toggleUserActive(req.params.id);
-    res.json(user);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-}
-
 // DELETE USER
-export const deleteUser = (req, res) => {
-    userService.deleteUser(req.params.id);
-    res.json({ message: "User deleted" });
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await userService.deleteUserDB(id);
+
+    if (result.affectedRows > 0) {
+      return res.json({ message: "User deleted" });
+    }
+
+    res.status(404).json({ error: "User not found" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
