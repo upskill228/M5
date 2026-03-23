@@ -1,16 +1,14 @@
+import { asyncHandler } from "../middlewares/asyncHandler.js";
 import * as taskService from "../services/taskService.js";
+import { validateSortParam } from "../utils/queryValidators.js";
 
 // GET TASKS
-export const getTasks = async (req, res) => {
-  try {
-    const sort = req.query.sort;
-    const search = req.query.search;
-    const tasks = await taskService.getTasks(sort, search);
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+export const getTasks = asyncHandler(async (req, res) => {
+  const { search, sort } = req.query;
+  validateSortParam(sort, ["newest", "oldest"]);
+  const tasks = await taskService.getAllTasksDB({ search, sort });
+  res.json(tasks);
+});
 
 // export const getTasks = (req, res) => {
 //   try {

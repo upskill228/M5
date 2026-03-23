@@ -1,59 +1,34 @@
+import { asyncHandler } from "../middlewares/asyncHandler.js";
 import * as userService from "../services/userService.js";
-import { ValidationError } from "../utils/validationError.js";
+import { validateSortParam } from "../utils/queryValidators.js";
 
-// GET USERS
-export const getUsers = async (req, res) => {
-  try {
-    const users = await userService.getAllUsersDB();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+// GET ALL USERS
+export const getUsers = asyncHandler(async (req, res) => {
+  const { search, sort } = req.query;
+  validateSortParam(sort);
+  const users = await userService.getAllUsersDB({ search, sort });
+  res.json(users);
+});
+
+// GET USER BY ID
+export const getUserById = asyncHandler(async (req, res) => {
+  res.json(req.user);
+});
 
 // POST USER
-export const createUser = async (req, res) => {
-  try { 
-    const { name, email, active } = req.body;
-    const newUser = await userService.createUserDB(name, email, active);
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(error instanceof ValidationError ? 400 : 500)
-       .json({ error: error.message });
-  }
-};
+export const createUser = asyncHandler(async (req, res) => {
+  const newUser = await userService.createUserDB(req.body);
+  res.status(201).json(newUser);
+});
 
 // PUT USER
-export const updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, email, active } = req.body;
-
-    const result = await userService.updateUserDB(id, name, email, active);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.json({ message: "User updated" });
-  } catch (error) {
-    res.status(error instanceof ValidationError ? 400 : 500)
-       .json({ error: error.message });
-  }
-};
+export const updateUser = asyncHandler(async (req, res) => {
+  const updatedUser = await userService.updateUserDB(req.params.id, req.body);
+  res.json(updatedUser);
+});
 
 // DELETE USER
-export const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await userService.deleteUserDB(id);
-
-    if (result.affectedRows > 0) {
-      return res.json({ message: "User deleted" });
-    }
-
-    res.status(404).json({ error: "User not found" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+export const deleteUser = asyncHandler(async (req, res) => {
+  await userService.deleteUserDB(req.params.id);
+  res.status(204).send();
+});

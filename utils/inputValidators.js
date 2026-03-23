@@ -1,6 +1,6 @@
 // Validates if string is empty or only spaces
 export const isEmpty = (value) => {
-  return !value || value.trim() === "";
+  return !value || typeof value !== "string" || value.trim() === "";
 };
 
 // Validates field with minimum length

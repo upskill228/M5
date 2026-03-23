@@ -1,4 +1,4 @@
-import { isEmpty } from "../utils/validators.js";
+import { isEmpty } from "../utils/inputValidators.js";
 
 export const validateCreateTag = (req, res, next) => {
   const { name } = req.body;
