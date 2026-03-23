@@ -28,3 +28,9 @@ export const validateUpdateTask = (req, res, next) => {
 
   next();
 };
+
+/*
+Este middleware de verificação de task é utilizado na taskRoutes.js para verificar se a task existe antes do controller.
+As operações só são realizadas se as tasks passsarem a validação.
+Fornece feedback adequado em caso de erro.
+*/ 

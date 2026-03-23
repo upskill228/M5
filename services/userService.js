@@ -1,11 +1,19 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/dbErrorHandler.js";
+import { ValidationError } from "../utils/ValidationError.js";
+
+// users = [
+//   { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },
+//   { id: 2, name: "João Costa", email: "joao@email.com", active: true },
+//   { id: 3, name: "Maria Santos", email: "maria@email.com", active: false }
+// ];
 
 // .filter()	-> WHERE
 // .sort()	-> ORDER BY
 // .push()	-> INSERT
 // .find()	-> SELECT WHERE
 // services/userService.js
+
 
 // GET ALL USERS
 export const getAllUsersDB = async ({ search = null, sort = null } = {}) => {
@@ -26,7 +34,7 @@ export const getAllUsersDB = async ({ search = null, sort = null } = {}) => {
     return rows;
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
   }
 };
 
@@ -34,9 +42,25 @@ export const getAllUsersDB = async ({ search = null, sort = null } = {}) => {
 export const getUserById = async (id) => {
   try {
     const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
-    return rows[0];
+    return rows[0] || null;
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
+  }
+};
+
+// GET USER STATS
+export const getUserStatsDB = async () => {
+  try {
+    const [totalResult] = await db.query("SELECT COUNT(*) AS total FROM users");
+    const [activeResult] = await db.query("SELECT COUNT(*) AS active FROM users WHERE active = true");
+
+    const total = totalResult[0].total;
+    const active = activeResult[0].active;
+    const activePercentage = total > 0 ? Number(((active / total) * 100).toFixed(2)) : 0;
+
+    return { total, active, activePercentage };
+  } catch (err) {
+    throw handleDBError(err);
   }
 };
 
@@ -56,38 +80,107 @@ export const createUserDB = async ({ name, email, active = true }) => {
     };
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
   }
 };
+
+/* *****
+updateUserPartialDB usa spread operator { id, ...userData }, retornando apenas os campos enviados + id.
+updateUserDB retorna todos os campos possíveis, mesmo que não tenham sido alterados. **** */
 
 // UPDATE USER
 export const updateUserDB = async (id, { name, email, active }) => {
   try {
-    const [result] = await db.query(
-      "UPDATE users SET name = ?, email = ?, active = ? WHERE id = ?",
-      [name, email, active, id]
-    );
+    const fields = [];
+    const params = [];
 
-    if (result.affectedRows === 0) return null;
+    if (name !== undefined) { fields.push("name = ?"); params.push(name); }
+    if (email !== undefined) { fields.push("email = ?"); params.push(email); }
+    if (active !== undefined) { fields.push("active = ?"); params.push(active); }
 
-    return { id, name, email, active };
+    if (fields.length === 0) {
+      throw new ValidationError("No fields provided to update");
+    }
+
+    params.push(id);
+    const query = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+
+    const [result] = await db.query(query, params);
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("User not found");
+    }
+
+    return {
+      id,
+      name,
+      email,
+      active
+    };
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
+  }
+};
+
+// PATCH USER
+export const updateUserPartialDB = async (id, userData) => {
+  try {
+    const fields = [];
+    const params = [];
+
+    if (userData.name !== undefined) {
+      fields.push("name = ?");
+      params.push(userData.name);
+    }
+    if (userData.email !== undefined) {
+      fields.push("email = ?");
+      params.push(userData.email);
+    }
+    if (userData.active !== undefined) {
+      if (typeof userData.active !== "boolean") {
+        throw new ValidationError("Active must be a boolean");
+      }
+      fields.push("active = ?");
+      params.push(userData.active);
+    }
+
+    if (fields.length === 0) {
+      throw new ValidationError("No fields provided to update");
+    }
+
+    params.push(id);
+    const query = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+
+    const [result] = await db.query(query, params);
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("User not found");
+    }
+
+    // Return the updated fields + ID
+    return { id, ...userData }; // spread operator
+
+  } catch (err) {
+    throw handleDBError(err);
   }
 };
 
 // DELETE USER
 export const deleteUserDB = async (id) => {
   try {
-    const [result] = await db.query(
-      "DELETE FROM users WHERE id = ?",
-      [id]
-    );
+    const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
 
-    return result.affectedRows > 0;
+    if (result.affectedRows === 0) {
+      throw new ValidationError("User not found");
+    }
+
+    return {
+      success: true,
+      message: "User deleted"
+    };
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
   }
 };

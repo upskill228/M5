@@ -1,5 +1,5 @@
 import { asyncHandler } from "./asyncHandler.js";
-import { ValidationError } from "./utils/ValidationError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 import * as tagService from "../services/tagService.js";
 
 export const checkTagExists = asyncHandler(async (req, res, next) => {
@@ -10,7 +10,17 @@ export const checkTagExists = asyncHandler(async (req, res, next) => {
   if (!tag) {
     throw new ValidationError("Tag not found");
   }
-
+  
   req.tag = tag;
+
   next();
 });
+
+/*
+Este middleware de verificação de tag é utilizado na tagRoutes.js para verificar se o tag existe antes do controller.
+As operações só são realizadas se as tags passarem a validação.
+Fornece feedback adequado em caso de erro.
+
+-> Um middleware é assíncrono sempre que usa async/await, se chama funções que retornam Promises (await db.query(...);
+Nestes casos é necessário usar o asyncHandler para lidar com erros de forma centralizada.
+*/

@@ -7,3 +7,10 @@ export const checkDBConnection = async (db) => {
     process.exit(1);
   }
 };
+
+/*
+Função para verificar a conexão com a base de dados antes de iniciar o servidor;
+Tenta executar uma query simples (SELECT 1) para garantir que a conexão está a funcionar;
+Se a conexão falhar, mostra o erro na console.log e encerra o processo para evitar que o servidor inicie sem acesso ao banco.
+Está a ser chamado no app.js durante a inicialização do servidor.
+*/

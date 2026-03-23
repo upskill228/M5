@@ -1,5 +1,5 @@
 import { asyncHandler } from "./asyncHandler.js";
-import { ValidationError } from "./utils/ValidationError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 import * as taskService from "../services/taskService.js";
 
 export const checkTaskExists = asyncHandler(async (req, res, next) => {
@@ -15,3 +15,12 @@ export const checkTaskExists = asyncHandler(async (req, res, next) => {
 
   next();
 });
+
+/*
+Este middleware de verificação de task é utilizado na taskRoutes.js para verificar se o task existe antes do controller.
+As operações só são realizadas se as tasks passsarem a validação.
+Fornece feedback adequado em caso de erro.
+
+-> Um middleware é assíncrono sempre que usa async/await, se chama funções que retornam Promises (await db.query(...);
+Nestes casos é necessário usar o asyncHandler para lidar com erros de forma centralizada.
+*/

@@ -8,13 +8,13 @@ import tagRoutes from "./routes/tagRoutes.js";
 
 import logger from "./middlewares/loggerMiddleware.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
-import { checkDBConnection } from "./utils/dbUtils.js"; // ✅ Import do DB check
+import { checkDBConnection } from "./utils/checkDBConnection.js";
 
 dotenv.config();
 
 const app = express();
 
-// Global Middleware
+// Middleware
 app.use(express.json());
 app.use(logger);
 
@@ -23,7 +23,7 @@ app.use("/users", userRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/tags", tagRoutes);
 
-// Error handler - global (in the end always)
+// Error handler - global (in the end, always)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 3000;
 // Function start server
 const startServer = () => {
   app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`); // change to only "running on port" for production
+    console.log(`Server running on http://localhost:${PORT}`); // change to "running on port" for production
   });
 };
 

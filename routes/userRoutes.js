@@ -1,14 +1,24 @@
 import express from "express";
 import * as userController from "../controllers/userController.js";
+import { validateIdParam } from "../middlewares/validateIdParam.js";
 import { validateCreateUser, validateUpdateUser } from "../middlewares/validateUser.js";
 import { checkUserExists } from "../middlewares/checkUserExists.js";
+import { asyncHandler } from "../middlewares/asyncHandler.js";
 
 const router = express.Router();
 
-router.get("/", userController.getUsers);
-router.get("/:id", checkUserExists, userController.getUserById);
-router.post("/", validateCreateUser, userController.createUser);
-router.put("/:id", checkUserExists, validateUpdateUser, userController.updateUser);
-router.delete("/:id", checkUserExists, userController.deleteUser);
+router.get("/", asyncHandler(userController.getUsers));
+// router.get("/:id", validateIdParam,checkUserExists, asyncHandler(userController.getUserById));
+router.get("/stats", asyncHandler(userController.getUserStats));
+router.post("/", validateCreateUser, asyncHandler(userController.createUser));
+router.put("/:id", validateIdParam, checkUserExists, validateUpdateUser, asyncHandler(userController.updateUser));
+router.patch("/:id", validateIdParam, checkUserExists, asyncHandler(userController.patchUser));
+router.delete("/:id", validateIdParam, checkUserExists, asyncHandler(userController.deleteUser));
 
 export default router;
+
+/*
+Define as routes para as operações relacionadas com os users.
+Cada rota é associada a um controller específico e utiliza middlewares de validação / verificação de existência.
+O asyncHandler é utilizado para lidar com erros de forma centralizada.
+*/

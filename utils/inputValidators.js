@@ -13,10 +13,9 @@ export const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-// ------------------- APAGAR DEPOIS
-// Generates next ID based on array
-export const generateNextId = (array) => {
-  return array.length > 0
-    ? Math.max(...array.map(item => item.id)) + 1
-    : 1;
-};
+/*
+Funções puras (retornam true/false) e reutilizáveis de validação de inputs;
+podem ser usadas em vários middlewares para garantir que os dados são válidos antes de serem processados pelos controllers.
+
+-> O middleware é que é que é responsável por lançar ValidationError;
+*/

@@ -9,3 +9,13 @@ export const errorHandler = (err, req, res, next) => {
 
   res.status(500).json({ error: "Internal Server Error" });
 };
+
+/* 
+Fluxo completo:
+route → asyncHandler → controller → (erro) → next(err) → errorHandler
+
+Este é um error middleware global do Express que recebe erros do next(err) e evita try/catch em todo o lado;
+
+erros controlados → 400 (ex: validação)
+erros inesperados → 500 (erros do servidor e que não queremos passar para frontend)
+*/

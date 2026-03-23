@@ -13,3 +13,9 @@ export const handleDBError = (err) => {
 
   throw err;
 };
+
+/*
+Função para mapear erros comuns do MySQL para mensagens de erro mais amigáveis;
+Evita que erros da data base sejam expostos diretamente ao frontend.
+Pode ser usada nos services para garantir que os erros sejam tratados adequadamente.
+*/

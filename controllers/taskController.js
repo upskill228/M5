@@ -1,64 +1,63 @@
-import { asyncHandler } from "../middlewares/asyncHandler.js";
 import * as taskService from "../services/taskService.js";
 import { validateSortParam } from "../utils/queryValidators.js";
 
-// GET TASKS
-export const getTasks = asyncHandler(async (req, res) => {
+// GET ALL TASKS
+export const getTasks = async (req, res) => {
   const { search, sort } = req.query;
-  validateSortParam(sort, ["newest", "oldest"]);
+  validateSortParam(sort);
+
   const tasks = await taskService.getAllTasksDB({ search, sort });
   res.json(tasks);
-});
+};
 
-// export const getTasks = (req, res) => {
-//   try {
-//     const sort = req.query.sort;
-//     const search = req.query.search;
-//     const tasks = taskService.getAllTasks(sort, search);
-//     res.json(tasks);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
+// GET TASK BY ID
+export const getTaskById = async (req, res) => {
+  // Middleware checkTaskExists already fetched the task and stored it in req.task
+  res.json(req.task);
+};
 
-// GET STATS
-export const getTaskStats = (req, res) => {
-  const stats = taskService.getTaskStats();
+// GET TASK STATS
+export const getTaskStats = async (req, res) => {
+  const stats = await taskService.getTaskStatsDB();
   res.json(stats);
 };
 
 // POST TASK
-export const createTask = (req, res) => {
-  try {
-    const newTask = taskService.createTask(req.body);
-    res.status(201).json(newTask);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// POST - ADD TAG TO TASK
-export const addTagToTask = (req, res) => {
-  try { 
-    const associacao = taskService.addTagToTask(req.params.id, req.body.tagId);
-    res.status(201).json(associacao);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
+export const createTask = async (req, res) => {
+  const newTask = await taskService.createTaskDB(req.body);
+  res.status(201).json({
+    success: true,
+    message: "Task created",
+    task: newTask
+  });
 };
 
 // PUT TASK
-export const updateTask = (req, res) => {
-  try {
-    const task = taskService.updateTask(req.params.id, req.body);
-    res.json(task);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
+export const updateTask = async (req, res) => {
+  const updatedTask = await taskService.updateTaskDB(req.params.id, req.body);
+  res.json({
+    success: true,
+    message: "Task updated",
+    task: updatedTask
+  });
 };
 
 // DELETE TASK
-export const deleteTask = (req, res) => {
-    const counts = taskService.deleteTask(req.params.id);
-    res.json({ message: "Task deleted", counts });
+export const deleteTask = async (req, res) => {
+  const result = await taskService.deleteTaskDB(req.params.id);
+  res.json(result);
 };
+
+// GET TASKS BY USER ID
+export const getTasksByUser = async (req, res) => {
+  const userId = req.params.id;
+  const tasks = await taskService.getTasksByUserDB(userId);
+  res.json(tasks);
+};
+
+/*
+Este taskController é utilizado na taskRoutes.js para lidar com as requisições relacionadas às tasks.
+O try and catch não são necessários aqui porque os erros são tratados nos serviços e propagados para os middlewares de erro.
+As operações de GET, POST, PUT e DELETE são realizadas utilizando os serviços correspondentes.
+Fornece feedback adequado de status.
+*/

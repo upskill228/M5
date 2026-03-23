@@ -1,5 +1,5 @@
-import { isEmpty, isValidEmail } from "./utils/inputValidators.js";
-import { ValidationError } from "./utils/ValidationError.js";
+import { isEmpty, isValidEmail } from "../utils/inputValidators.js";
+import { ValidationError } from "../utils/ValidationError.js";
 
 export const validateCreateUser = (req, res, next) => {
   const { name, email } = req.body;
@@ -32,3 +32,9 @@ export const validateUpdateUser = (req, res, next) => {
 
   next();
 };
+
+/*
+Este middleware de verificação de user é utilizado na userRoutes.js para verificar se o user existe antes do controller.
+As operações só são realizadas se os users passsarem a validação.
+Fornece feedback adequado em caso de erro.
+*/ 
