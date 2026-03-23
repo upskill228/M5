@@ -1,17 +1,15 @@
 import { ValidationError } from "./ValidationError.js";
 
 export const handleDBError = (err) => {
-  // UNIQUE constraint violation
-  if (err.code === "23505") {
-    const field = err.detail?.match(/\((.*?)\)/)?.[1] || "field";
-    throw new ValidationError(`${field} já existe`);
+  // UNIQUE constraint
+  if (err.code === "ER_DUP_ENTRY") {
+    throw new ValidationError("Entry already exists with the same unique value");
   }
 
-  // FOREIGN KEY violation
-  if (err.code === "23503") {
-    throw new ValidationError("Referência inválida em outra tabela");
+  // FOREIGN KEY constraint
+  if (err.code === "ER_NO_REFERENCED_ROW_2") {
+    throw new ValidationError("Invalid reference in another table");
   }
 
-  //Other DB errors continue to errorHandler (500)
   throw err;
 };

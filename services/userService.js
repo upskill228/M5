@@ -9,56 +9,69 @@ import { handleDBError } from "../utils/dbErrorHandler.js";
 
 // GET ALL USERS
 export const getAllUsersDB = async ({ search = null, sort = null } = {}) => {
-  let query = "SELECT * FROM users";
-  const params = [];
+  try {
+    let query = "SELECT * FROM users";
+    const params = [];
 
-  if (search) {
-    params.push(`%${search.toLowerCase()}%`);
-    query += ` WHERE LOWER(name) LIKE $${params.length}`;
+    if (search) {
+      query += " WHERE LOWER(name) LIKE ?";
+      params.push(`%${search.toLowerCase()}%`);
+    }
+
+    if (sort && ["asc", "desc"].includes(sort.toLowerCase())) {
+      query += ` ORDER BY name ${sort.toUpperCase()}`;
+    }
+
+    const [rows] = await db.query(query, params);
+    return rows;
+
+  } catch (err) {
+    handleDBError(err);
   }
-
-  if (sort && ["asc", "desc"].includes(sort.toLowerCase())) {
-    query += ` ORDER BY name ${sort.toUpperCase()}`;
-  }
-
-  const { rows } = await db.query(query, params);
-  return rows;
 };
 
 // GET USER BY ID
 export const getUserById = async (id) => {
-  const { rows } = await db.query("SELECT * FROM users WHERE id = $1", [id]);
-  return rows[0];
-};
-
-// POST USER
-export const createUserDB = async ({ name, email, active = true }) => {
   try {
-    const { rows } = await db.query(
-      "INSERT INTO users (name, email, active) VALUES ($1, $2, $3) RETURNING *",
-      [name, email, active]
-    );
+    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
     return rows[0];
   } catch (err) {
     handleDBError(err);
   }
 };
 
-// PUT USER
-export const updateUserDB = async (id, { name, email, active }) => {
+// CREATE USER
+export const createUserDB = async ({ name, email, active = true }) => {
   try {
-    const user = await getUserById(id);
-    const updated = {
-      name: name ?? user.name,
-      email: email ?? user.email,
-      active: active ?? user.active,
+    const [result] = await db.query(
+      "INSERT INTO users (name, email, active) VALUES (?, ?, ?)",
+      [name, email, active]
+    );
+
+    return {
+      id: result.insertId,
+      name,
+      email,
+      active
     };
 
-    const { rows } = await db.query(
-      "UPDATE users SET name=$1, email=$2, active=$3 WHERE id=$4 RETURNING *",
-      [updated.name, updated.email, updated.active, id]
+  } catch (err) {
+    handleDBError(err);
+  }
+};
+
+// UPDATE USER
+export const updateUserDB = async (id, { name, email, active }) => {
+  try {
+    const [result] = await db.query(
+      "UPDATE users SET name = ?, email = ?, active = ? WHERE id = ?",
+      [name, email, active, id]
     );
-    return rows[0];
+
+    if (result.affectedRows === 0) return null;
+
+    return { id, name, email, active };
+
   } catch (err) {
     handleDBError(err);
   }
@@ -67,7 +80,13 @@ export const updateUserDB = async (id, { name, email, active }) => {
 // DELETE USER
 export const deleteUserDB = async (id) => {
   try {
-    await db.query("DELETE FROM users WHERE id = $1", [id]);
+    const [result] = await db.query(
+      "DELETE FROM users WHERE id = ?",
+      [id]
+    );
+
+    return result.affectedRows > 0;
+
   } catch (err) {
     handleDBError(err);
   }

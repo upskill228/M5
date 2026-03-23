@@ -1,15 +1,16 @@
+import { asyncHandler } from "./asyncHandler.js";
+import { ValidationError } from "./utils/ValidationError.js";
 import * as tagService from "../services/tagService.js";
 
-export const checkTagExists = (req, res, next) => {
+export const checkTagExists = asyncHandler(async (req, res, next) => {
   const tagId = req.params.id;
 
-  const tag = tagService.getTagById(tagId);
+  const tag = await tagService.getTagById(tagId);
 
   if (!tag) {
-    return res.status(404).json({ error: "Tag not found" });
+    throw new ValidationError("Tag not found");
   }
 
   req.tag = tag;
-
   next();
-};
+});

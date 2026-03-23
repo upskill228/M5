@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 3000;
 // Function start server
 const startServer = () => {
   app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`); // change to only "running on port" for production
   });
 };
 

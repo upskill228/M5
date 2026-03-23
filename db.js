@@ -8,8 +8,9 @@ export const db = mysql
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
+        database: process.env.DB_NAME, //db_backend
         dateStrings: true,
-        connectionLimit: 10
+        connectionLimit: 10,
+        charset: "utf8mb4", // prevent accent issues
     })
     .promise();
