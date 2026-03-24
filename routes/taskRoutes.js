@@ -33,7 +33,7 @@ router.delete("/:id/comments/:commentId", validateIdParam, checkTaskExists, vali
 export default router;
 
 /*
-Define as routes para as operações relacionadas com as tasks.
+Define as routes para as operações relacionadas com as tasks, tags e comments.
 Cada rota é associada a um controller específico e utiliza middlewares de validação / verificação de existência.
 O asyncHandler é utilizado para lidar com erros de forma centralizada.
 */

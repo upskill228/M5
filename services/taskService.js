@@ -2,6 +2,7 @@ import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
 import { NotFoundError } from "../utils/NotFoundError.js";
+import { getUserByIdDB } from "./userService.js";
 
 // GET ALL TASKS
 export const getAllTasksDB = async ({ search = null, sort = null } = {}) => {
@@ -55,19 +56,33 @@ export const getTaskStatsDB = async () => {
 // CREATE TASK
 export const createTaskDB = async ({ title, category, completed = false, user_id, completion_date }) => {
   try {
+    // Validar user_id
+    if (user_id === undefined || user_id === null) {
+      throw new ValidationError("user_id is required");
+    }
+
+    const userId = Number(user_id);
+    if (!Number.isInteger(userId) || userId <= 0) { // Check if user_id is a positive integer (INT)
+      throw new ValidationError("user_id must be a positive integer");
+    }
+
+    const user = await getUserByIdDB(userId);
+    if (!user) {
+      throw new ValidationError("User does not exist");
+    }
+
     const [result] = await db.query(
       "INSERT INTO tasks (title, category, completed, user_id, completion_date) VALUES (?, ?, ?, ?, ?)",
       [title, category, completed, user_id, completion_date]
     );
 
-    return {
-      id: result.insertId,
-      title,
-      category,
-      completed,
-      user_id,
-      completion_date
-    };
+    // Get the task with the created_at timestamp from the database
+    const [rows] = await db.query(
+      "SELECT * FROM tasks WHERE id = ?",
+      [result.insertId]
+    );
+
+    return rows[0];
 
   } catch (err) {
     throw handleDBError(err);
@@ -77,6 +92,19 @@ export const createTaskDB = async ({ title, category, completed = false, user_id
 // UPDATE TASK
 export const updateTaskDB = async (id, { title, category, completed, user_id, completion_date }) => {
   try {
+    // Validate user_id if provided
+    if (user_id !== undefined && user_id !== null) {
+      const userId = Number(user_id);
+      if (!Number.isInteger(userId) || userId <= 0) {
+        throw new ValidationError("user_id must be a positive integer");
+      }
+
+      const user = await getUserByIdDB(userId);
+      if (!user) {
+        throw new ValidationError("User does not exist");
+      }
+    }
+
     const fields = [];
     const params = [];
 
@@ -108,6 +136,19 @@ export const updateTaskDB = async (id, { title, category, completed, user_id, co
 // PATCH TASK
 export const updateTaskPartialDB = async (id, taskData) => {
   try {
+    // Validate user_id if provided
+    if (taskData.user_id !== undefined && taskData.user_id !== null) {
+      const userId = Number(taskData.user_id);
+      if (!Number.isInteger(userId) || userId <= 0) {
+        throw new ValidationError("user_id must be a positive integer");
+      }
+
+      const user = await getUserByIdDB(userId);
+      if (!user) {
+        throw new ValidationError("User does not exist");
+      }
+    }
+
     const fields = [];
     const params = [];
 
@@ -222,3 +263,9 @@ export const removeTagFromTaskDB = async (taskId, tagId) => {
     throw handleDBError(err);
   }
 };
+
+/* taskService tem a lógica de negócio, validações e interações com o banco de dados.
+O try and catch é necessário aqui para capturar erros específicos do banco de dados e lançar erros personalizados.
+As funções de serviço são chamadas pelos controllers, que lidam com as requisições HTTP e respostas.
+Fornece feedback adequado de status e mensagens.
+*/

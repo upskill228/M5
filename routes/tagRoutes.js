@@ -8,7 +8,6 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 const router = express.Router();
 
 router.get("/", asyncHandler(tagController.getTags));
-router.get("/stats", asyncHandler(tagController.getTagStats));
 router.post("/", validateCreateTag, asyncHandler(tagController.createTag));
 router.delete("/:id", validateIdParam, checkTagExists, asyncHandler(tagController.deleteTag));
 router.get("/:id/tasks", validateIdParam, checkTagExists, asyncHandler(tagController.getTasksByTag));

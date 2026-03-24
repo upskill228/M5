@@ -65,21 +65,18 @@ export const createUserDB = async ({ name, email, active = true }) => {
       [name, email, active]
     );
 
-    return {
-      id: result.insertId,
-      name,
-      email,
-      active
-    };
+    // Get the user with the created_at timestamp from the database
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE id = ?",
+      [result.insertId]
+    );
+
+    return rows[0];
 
   } catch (err) {
     throw handleDBError(err, "Email already exists");
   }
 };
-
-/* *****
-updateUserPartialDB usa spread operator { id, ...userData }, retornando apenas os campos enviados + id.
-updateUserDB retorna todos os campos possíveis, mesmo que não tenham sido alterados. **** */
 
 // UPDATE USER
 export const updateUserDB = async (id, { name, email, active }) => {
@@ -115,6 +112,11 @@ export const updateUserDB = async (id, { name, email, active }) => {
     throw handleDBError(err);
   }
 };
+
+/*
+patchUserDB usa spread operator { id, ...userData }, retornando apenas os campos enviados + id.
+updateUserDB retorna todos os campos possíveis, mesmo que não tenham sido alterados.
+*/
 
 // PATCH USER
 export const patchUserDB = async (id, userData) => {
@@ -177,3 +179,9 @@ export const deleteUserDB = async (id) => {
     throw handleDBError(err);
   }
 };
+
+/* userService tem a lógica de negócio, validações e interações com o banco de dados.
+O try and catch é necessário aqui para capturar erros específicos do banco de dados e lançar erros personalizados.
+As funções de serviço são chamadas pelos controllers, que lidam com as requisições HTTP e respostas.
+Fornece feedback adequado de status e mensagens.
+*/

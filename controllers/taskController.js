@@ -1,8 +1,6 @@
 import * as taskService from "../services/taskService.js";
-import * as userService from "../services/userService.js";
 import * as commentService from "../services/commentService.js";
 import { validateSortParam } from "../utils/queryValidators.js";
-import { ValidationError } from "../utils/ValidationError.js";
 
 // GET ALL TASKS
 export const getTasks = async (req, res) => {
@@ -26,23 +24,6 @@ export const getTaskStats = async (req, res) => {
 
 // CREATE TASK
 export const createTask = async (req, res) => {
-  const { user_id } = req.body;
-
-  // Validar user_id
-  if (user_id === undefined || user_id === null) {
-    throw new ValidationError("user_id is required");
-  }
-
-  const userId = Number(user_id);
-  if (!Number.isInteger(userId) || userId <= 0) {
-    throw new ValidationError("user_id must be a positive integer");
-  }
-
-  const user = await userService.getUserByIdDB(userId);
-  if (!user) {
-    throw new ValidationError("User does not exist");
-  }
-
   const newTask = await taskService.createTaskDB(req.body);
   res.status(201).json({
     success: true,
@@ -53,51 +34,21 @@ export const createTask = async (req, res) => {
 
 // UPDATE TASK (PUT)
 export const updateTask = async (req, res) => {
-  const { user_id } = req.body;
-
-  // Validar user_id se fornecido
-  if (user_id !== undefined && user_id !== null) {
-    const userId = Number(user_id);
-    if (!Number.isInteger(userId) || userId <= 0) {
-      throw new ValidationError("user_id must be a positive integer");
-    }
-
-    const user = await userService.getUserByIdDB(userId);
-    if (!user) {
-      throw new ValidationError("User does not exist");
-    }
-  }
-
-  const updatedTask = await taskService.updateTaskDB(req.params.id, req.body);
+  const task = await taskService.updateTaskDB(req.params.id, req.body);
   res.json({
     success: true,
     message: "Task updated",
-    task: updatedTask
+    task: task
   });
 };
 
 // PATCH TASK
 export const patchTask = async (req, res) => {
-  const { user_id } = req.body;
-
-  // Validar user_id se fornecido
-  if (user_id !== undefined && user_id !== null) {
-    const userId = Number(user_id);
-    if (!Number.isInteger(userId) || userId <= 0) {
-      throw new ValidationError("user_id must be a positive integer");
-    }
-
-    const user = await userService.getUserByIdDB(userId);
-    if (!user) {
-      throw new ValidationError("User does not exist");
-    }
-  }
-
-  const updatedTask = await taskService.updateTaskPartialDB(req.params.id, req.body);
+  const task = await taskService.updateTaskPartialDB(req.params.id, req.body);
   res.json({
     success: true,
     message: "Task updated partially",
-    task: updatedTask
+    task: task
   });
 };
 
@@ -117,23 +68,6 @@ export const getTasksByUser = async (req, res) => {
 
 // POST COMMENT
 export const createComment = async (req, res) => {
-  const { user_id, content } = req.body;
-
-  // Validar user_id
-  if (user_id === undefined || user_id === null) {
-    throw new ValidationError("user_id is required");
-  }
-
-  const userId = Number(user_id);
-  if (!Number.isInteger(userId) || userId <= 0) {
-    throw new ValidationError("user_id must be a positive integer");
-  }
-
-  const user = await userService.getUserByIdDB(userId);
-  if (!user) {
-    throw new ValidationError("User does not exist");
-  }
-
   const newComment = await commentService.createCommentDB(req.body);
   res.status(201).json({
     success: true,
@@ -150,26 +84,11 @@ export const getCommentsByTask = async (req, res) => {
 
 // PUT COMMENT
 export const updateComment = async (req, res) => {
-  const { user_id } = req.body;
-
-  // Validar user_id se fornecido
-  if (user_id !== undefined && user_id !== null) {
-    const userId = Number(user_id);
-    if (!Number.isInteger(userId) || userId <= 0) {
-      throw new ValidationError("user_id must be a positive integer");
-    }
-
-    const user = await userService.getUserByIdDB(userId);
-    if (!user) {
-      throw new ValidationError("User does not exist");
-    }
-  }
-
-  const updatedComment = await commentService.updateCommentDB(req.params.commentId, req.body);
+  const comment = await commentService.updateCommentDB(req.params.commentId, req.body);
   res.json({
     success: true,
     message: "Comment updated",
-    comment: updatedComment
+    comment: comment
   });
 };
 
@@ -218,5 +137,5 @@ export const removeTagFromTask = async (req, res) => {
 Este taskController é utilizado na taskRoutes.js para lidar com as requisições relacionadas às tasks.
 O try and catch não são necessários aqui porque os erros são tratados nos serviços e propagados para os middlewares de erro.
 As operações de GET, POST, PUT e DELETE são realizadas utilizando os serviços correspondentes.
-Fornece feedback adequado de status.
+Fornece feedback adequado.
 */

@@ -1,7 +1,5 @@
-
 import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
-import { ValidationError } from "../utils/ValidationError.js";
 import { NotFoundError } from "../utils/NotFoundError.js";
 
 // GET ALL TAGS
@@ -44,18 +42,6 @@ export const getTagByIdDB = async (id) => {
 
 // Alias for middleware compatibility
 export const getTagById = getTagByIdDB;
-
-// GET TAG STATS
-export const getTagStatsDB = async () => {
-  try {
-    const [totalResult] = await db.query("SELECT COUNT(*) AS total FROM tags");
-    const total = totalResult[0].total;
-
-    return { total };
-  } catch (err) {
-    throw handleDBError(err);
-  }
-};
 
 // CREATE TAG
 export const createTagDB = async ({ name }) => {
@@ -109,3 +95,9 @@ export const getTasksByTagDB = async (tagId) => {
     throw handleDBError(err);
   }
 };
+
+/* tagService tem a lógica de negócio, validações e interações com o banco de dados.
+O try and catch é necessário aqui para capturar erros específicos do banco de dados e lançar erros personalizados.
+As funções de serviço são chamadas pelos controllers, que lidam com as requisições HTTP e respostas.
+Fornece feedback adequado de status e mensagens.
+*/
