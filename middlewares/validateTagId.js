@@ -18,3 +18,6 @@ export const validateTagId = (req, res, next) => {
 
   next();
 };
+
+/* Este middleware de validação de tag_id para validar tag_id do body da requisição (req.body.tag_id).
+*/

@@ -16,3 +16,6 @@ export const validateCommentIdParam = (req, res, next) => {
   req.params.commentId = commentIdNum;
   next();
 };
+
+/* Middleware que valida :commentId route parameter.
+*/

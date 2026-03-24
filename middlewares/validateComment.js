@@ -27,7 +27,7 @@ export const validateUpdateComment = (req, res, next) => {
 };
 
 /*
-Este middleware é utilizado nas rotas de comentários para validar o input content.
+Este middleware é utilizado na taskRoutes/commens comentários para validar o input content.
 As operações só são realizadas se o conteúdo passar na validação.
 Fornece feedback adequado em caso de erro.
 */

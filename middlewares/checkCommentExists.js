@@ -18,3 +18,11 @@ export const checkCommentExists = asyncHandler(async (req, res, next) => {
   req.comment = comment;
   next();
 });
+
+/* checkCommentExists é um middleware que verifica se um comentário existe antes de permitir que a rota continue.
+Ele é utilizado nas rotas de comentário para garantir que as operações só sejam realizadas em comentários válidos.
+Fornece feedback adequado em caso de erro, como ID inválido ou comentário não encontrado.
+
+-> Um middleware é assíncrono sempre que usa async/await, se chama funções que retornam Promises (await db.query(...);
+Nestes casos é necessário usar o asyncHandler para lidar com erros de forma centralizada.
+*/
