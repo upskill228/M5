@@ -2,18 +2,10 @@ import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
 
-// users = [
-//   { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },
-//   { id: 2, name: "João Costa", email: "joao@email.com", active: true },
-//   { id: 3, name: "Maria Santos", email: "maria@email.com", active: false }
-// ];
-
 // .filter()	-> WHERE
 // .sort()	-> ORDER BY
 // .push()	-> INSERT
 // .find()	-> SELECT WHERE
-// services/userService.js
-
 
 // GET ALL USERS
 export const getAllUsersDB = async ({ search = null, sort = null } = {}) => {

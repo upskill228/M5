@@ -3,12 +3,6 @@ import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
 
-// let tags = [
-//    { id: 1, name: "Urgent" },
-//    { id: 2, name: "Bug" },
-//    { id: 3, name: "Enhancement" },
-// ];
-
 // GET ALL TAGS
 export const getAllTagsDB = async ({ search = null, sort = null } = {}) => {
   try {

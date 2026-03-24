@@ -63,10 +63,73 @@ export const getTasksByUser = async (req, res) => {
   res.json(tasks);
 };
 
+// COMMENTS
+
+// POST COMMENT
+export const createComment = async (req, res) => {
+  const newComment = await commentService.createCommentDB(req.body);
+  res.status(201).json({
+    success: true,
+    message: "Comment created",
+    comment: newComment
+  });
+};
+
+// GET COMMENTS BY TASK ID
+export const getCommentsByTask = async (req, res) => {
+  const comments = await commentService.getCommentsByTaskDB(req.params.id);
+  res.json(comments);
+};
+
+// PUT COMMENT
+export const updateComment = async (req, res) => {
+  const updatedComment = await commentService.updateCommentDB(req.params.commentId, req.body);
+  res.json({
+    success: true,
+    message: "Comment updated",
+    comment: updatedComment
+  });
+};
+
+// DELETE COMMENT
+export const deleteComment = async (req, res) => {
+  const result = await commentService.deleteCommentDB(req.params.commentId);
+  res.json(result);
+};
+
+// TAGS
+
 // GET TAGS BY TASK ID
 export const getTagsByTask = async (req, res) => {
-  const tags = await taskService.getTagsByTaskDB(req.params.id);
+  const taskId = req.params.id;
+  const tags = await taskService.getTagsByTaskDB(taskId);
   res.json(tags);
+};
+
+// ADD TAG TO TASK
+export const addTagToTask = async (req, res) => {
+  const { tag_id } = req.body;
+  const taskId = req.params.id;
+
+  const result = await taskService.addTagToTaskDB(taskId, tag_id);
+  res.status(201).json({
+    success: true,
+    message: "Tag added to task",
+    taskTag: result
+  });
+};
+
+// DELETE TAG FROM TASK
+export const removeTagFromTask = async (req, res) => {
+  const { tag_id } = req.body;
+  const taskId = req.params.id;
+
+  const result = await taskService.removeTagFromTaskDB(taskId, tag_id);
+  res.json({
+    success: true,
+    message: "Tag removed from task",
+    taskTag: result
+  });
 };
 
 /*
