@@ -1,9 +1,10 @@
 import { ValidationError } from "./ValidationError.js";
 
-export const handleDBError = (err) => {
+export const handleDBError = (err, context = null) => {
   // UNIQUE constraint
   if (err.code === "ER_DUP_ENTRY") {
-    throw new ValidationError("Entry already exists with the same unique value");
+    const message = context || "Entry already exists with the same unique value";
+    throw new ValidationError(message);
   }
 
   // FOREIGN KEY constraint

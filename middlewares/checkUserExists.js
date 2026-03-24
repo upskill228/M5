@@ -1,5 +1,5 @@
 import { asyncHandler } from "./asyncHandler.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 import * as userService from "../services/userService.js";
 
 export const checkUserExists = asyncHandler(async (req, res, next) => {
@@ -8,7 +8,7 @@ export const checkUserExists = asyncHandler(async (req, res, next) => {
   const user = await userService.getUserById(userId);
 
   if (!user) {
-    throw new ValidationError("User not found");
+    throw new NotFoundError("User not found");
   }
 
   req.user = user;

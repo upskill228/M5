@@ -1,4 +1,5 @@
 import * as userService from "../services/userService.js";
+import * as taskService from "../services/taskService.js";
 import { validateSortParam } from "../utils/queryValidators.js";
 
 // GET ALL USERS
@@ -8,12 +9,6 @@ export const getUsers = async (req, res) => {
 
   const users = await userService.getAllUsersDB({ search, sort });
   res.json(users);
-};
-
-// GET USER BY ID
-export const getUserById = async (req, res) => {
-  // Middleware checkUserExists already fetched the user and stored it in req.user
-  res.json(req.user);
 };
 
 // GET USER STATS
@@ -56,6 +51,13 @@ export const patchUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   const result = await userService.deleteUserDB(req.params.id);
   res.json(result);
+};
+
+// GET TASKS BY USER ID
+export const getTasksByUser = async (req, res) => {
+  const userId = req.params.id;
+  const tasks = await taskService.getTasksByUserDB(userId);
+  res.json(tasks);
 };
 
 /*

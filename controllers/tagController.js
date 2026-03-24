@@ -1,17 +1,13 @@
 import * as tagService from "../services/tagService.js";
+import { validateSortParam } from "../utils/queryValidators.js";
 
 // GET ALL TAGS
 export const getTags = async (req, res) => {
   const { search, sort } = req.query;
+  validateSortParam(sort);
 
   const tags = await tagService.getAllTagsDB({ search, sort });
   res.json(tags);
-};
-
-// GET TAG BY ID
-export const getTagById = async (req, res) => {
-  // Middleware checkTagExists already fetched the tag and stored it in req.tag
-  res.json(req.tag);
 };
 
 // GET TAG STATS
@@ -30,20 +26,17 @@ export const createTag = async (req, res) => {
   });
 };
 
-// PUT TAG
-export const updateTag = async (req, res) => {
-  const updatedTag = await tagService.updateTagDB(req.params.id, req.body);
-  res.json({
-    success: true,
-    message: "Tag updated",
-    tag: updatedTag
-  });
-};
-
 // DELETE TAG
 export const deleteTag = async (req, res) => {
   const result = await tagService.deleteTagDB(req.params.id);
   res.json(result);
+};
+
+// GET TASKS BY TAG ID
+export const getTasksByTag = async (req, res) => {
+  const tagId = req.params.id;
+  const tasks = await tagService.getTasksByTagDB(tagId);
+  res.json(tasks);
 };
 
 /*

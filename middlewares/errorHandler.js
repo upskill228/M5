@@ -1,10 +1,15 @@
 import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 
 export const errorHandler = (err, req, res, next) => {
-  console.error(err); // 👈 importante para debug
+  console.error(err); // important for debug
 
   if (err instanceof ValidationError) {
     return res.status(400).json({ error: err.message });
+  }
+
+  if (err instanceof NotFoundError) {
+    return res.status(404).json({ error: err.message });
   }
 
   res.status(500).json({ error: "Internal Server Error" });

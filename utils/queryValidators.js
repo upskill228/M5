@@ -1,7 +1,15 @@
 import { ValidationError } from "./ValidationError.js";
 
 export const validateSortParam = (sort, allowed = ["asc", "desc"]) => {
-  if (sort && !allowed.includes(sort.toLowerCase())) {
+  // Validação defensiva: verifica tipo mesmo que query params sejam sempre strings
+  // Boa prática para APIs robustas
+  if (!sort) return; // Opcional é OK
+  
+  if (typeof sort !== "string") {
+    throw new ValidationError("Sort parameter must be a string");
+  }
+  
+  if (!allowed.includes(sort.toLowerCase())) {
     throw new ValidationError(`Sort must be one of: ${allowed.join(", ")}`);
   }
 };

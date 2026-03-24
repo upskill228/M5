@@ -2,6 +2,7 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 
 // GET ALL TAGS
 export const getAllTagsDB = async ({ search = null, sort = null } = {}) => {
@@ -59,10 +60,6 @@ export const getTagStatsDB = async () => {
 // CREATE TAG
 export const createTagDB = async ({ name }) => {
   try {
-    if (!name) {
-      throw new ValidationError("Name is required");
-    }
-
     const [result] = await db.query(
       "INSERT INTO tags (name) VALUES (?)",
       [name]
@@ -74,41 +71,7 @@ export const createTagDB = async ({ name }) => {
     };
 
   } catch (err) {
-    throw handleDBError(err);
-  }
-};
-
-// UPDATE TAG
-export const updateTagDB = async (id, { name }) => {
-  try {
-    if (name !== undefined && !name) {
-      throw new ValidationError("Name cannot be empty");
-    }
-
-    const fields = [];
-    const params = [];
-
-    if (name !== undefined) { 
-      fields.push("name = ?"); 
-      params.push(name); 
-    }
-
-    if (fields.length === 0) {
-      throw new ValidationError("No fields provided to update");
-    }
-
-    params.push(id);
-    const query = `UPDATE tags SET ${fields.join(", ")} WHERE id = ?`;
-    const [result] = await db.query(query, params);
-
-    if (result.affectedRows === 0) {
-      throw new ValidationError("Tag not found");
-    }
-
-    return { id, name };
-
-  } catch (err) {
-    throw handleDBError(err);
+    throw handleDBError(err, "Tag with this name already exists");
   }
 };
 
@@ -121,7 +84,7 @@ export const deleteTagDB = async (id) => {
     );
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("Tag not found");
+      throw new NotFoundError("Tag not found");
     }
 
     return {
@@ -129,6 +92,19 @@ export const deleteTagDB = async (id) => {
       message: "Tag deleted"
     };
 
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// GET TASKS BY TAG ID
+export const getTasksByTagDB = async (tagId) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT t.* FROM tasks t INNER JOIN task_tags tt ON t.id = tt.task_id WHERE tt.tag_id = ?",
+      [tagId]
+    );
+    return rows;
   } catch (err) {
     throw handleDBError(err);
   }

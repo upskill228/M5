@@ -1,5 +1,5 @@
 import { asyncHandler } from "./asyncHandler.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 import * as taskService from "../services/taskService.js";
 
 export const checkTaskExists = asyncHandler(async (req, res, next) => {
@@ -8,7 +8,7 @@ export const checkTaskExists = asyncHandler(async (req, res, next) => {
   const task = await taskService.getTaskById(taskId);
 
   if (!task) {
-    throw new ValidationError("Task not found");
+    throw new NotFoundError("Task not found");
   }
   
   req.task = task;

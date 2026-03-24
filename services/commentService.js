@@ -1,6 +1,7 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 
 // CREATE COMMENT
 export const createCommentDB = async ({ task_id, user_id, content }) => {
@@ -36,20 +37,29 @@ export const getCommentsByTaskDB = async (taskId) => {
   }
 };
 
+// GET COMMENT BY ID
+export const getCommentByIdDB = async (id) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM comments WHERE id = ?",
+      [id]
+    );
+    return rows[0] || null;
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
 // UPDATE COMMENT
 export const updateCommentDB = async (id, { content }) => {
   try {
-    if (!content) {
-      throw new ValidationError("Content is required");
-    }
-
     const [result] = await db.query(
       "UPDATE comments SET content = ? WHERE id = ?",
       [content, id]
     );
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("Comment not found");
+      throw new NotFoundError("Comment not found");
     }
 
     return {
@@ -71,7 +81,7 @@ export const deleteCommentDB = async (id) => {
     );
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("Comment not found");
+      throw new NotFoundError("Comment not found");
     }
 
     return {

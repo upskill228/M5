@@ -8,12 +8,12 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 const router = express.Router();
 
 router.get("/", asyncHandler(userController.getUsers));
-// router.get("/:id", validateIdParam,checkUserExists, asyncHandler(userController.getUserById));
 router.get("/stats", asyncHandler(userController.getUserStats));
 router.post("/", validateCreateUser, asyncHandler(userController.createUser));
 router.put("/:id", validateIdParam, checkUserExists, validateUpdateUser, asyncHandler(userController.updateUser));
-router.patch("/:id", validateIdParam, checkUserExists, asyncHandler(userController.patchUser));
+router.patch("/:id", validateIdParam, checkUserExists, validateUpdateUser, asyncHandler(userController.patchUser));
 router.delete("/:id", validateIdParam, checkUserExists, asyncHandler(userController.deleteUser));
+router.get("/:id/tasks", validateIdParam, checkUserExists, asyncHandler(userController.getTasksByUser));
 
 export default router;
 

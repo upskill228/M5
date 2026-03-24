@@ -5,7 +5,8 @@ export const isBlank = (value) => {
 
 // Validates field with minimum length
 export const isMinLength = (value, min) => {
-  return typeof value === "string" && value.trim().length >= min; // Se value for undefined:
+  if (typeof value !== "string") return false;
+  return value.trim().length >= min;
 };
 
 // Validates email

@@ -10,8 +10,8 @@ const router = express.Router();
 router.get("/", asyncHandler(tagController.getTags));
 router.get("/stats", asyncHandler(tagController.getTagStats));
 router.post("/", validateCreateTag, asyncHandler(tagController.createTag));
-router.put("/:id", validateIdParam, checkTagExists, asyncHandler(tagController.updateTag));
 router.delete("/:id", validateIdParam, checkTagExists, asyncHandler(tagController.deleteTag));
+router.get("/:id/tasks", validateIdParam, checkTagExists, asyncHandler(tagController.getTasksByTag));
 
 export default router;
 

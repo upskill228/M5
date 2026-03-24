@@ -1,6 +1,7 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 
 // GET ALL TASKS
 export const getAllTasksDB = async ({ search = null, sort = null } = {}) => {
@@ -94,7 +95,7 @@ export const updateTaskDB = async (id, { title, category, completed, user_id, co
     const [result] = await db.query(query, params);
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("Task not found");
+      throw new NotFoundError("Task not found");
     }
 
     return { id, title, category, completed, user_id, completion_date };
@@ -125,7 +126,7 @@ export const updateTaskPartialDB = async (id, taskData) => {
     const [result] = await db.query(query, params);
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("Task not found");
+      throw new NotFoundError("Task not found");
     }
 
     return { id, ...taskData };
@@ -154,7 +155,7 @@ export const deleteTaskDB = async (id) => {
     const [result] = await db.query("DELETE FROM tasks WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("Task not found");
+      throw new NotFoundError("Task not found");
     }
 
     return {
@@ -183,16 +184,6 @@ export const getTagsByTaskDB = async (taskId) => {
 // ADD TAG TO TASK
 export const addTagToTaskDB = async (taskId, tagId) => {
   try {
-    // Check if association already exists
-    const [existing] = await db.query(
-      "SELECT * FROM task_tags WHERE task_id = ? AND tag_id = ?",
-      [taskId, tagId]
-    );
-
-    if (existing.length > 0) {
-      throw new ValidationError("Tag is already associated with this task");
-    }
-
     const [result] = await db.query(
       "INSERT INTO task_tags (task_id, tag_id) VALUES (?, ?)",
       [taskId, tagId]
@@ -204,7 +195,7 @@ export const addTagToTaskDB = async (taskId, tagId) => {
     };
 
   } catch (err) {
-    throw handleDBError(err);
+    throw handleDBError(err, "Tag is already associated with this task");
   }
 };
 

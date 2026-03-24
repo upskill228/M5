@@ -1,6 +1,7 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/handleDBError.js";
 import { ValidationError } from "../utils/ValidationError.js";
+import { NotFoundError } from "../utils/NotFoundError.js";
 
 // .filter()	-> WHERE
 // .sort()	-> ORDER BY
@@ -72,7 +73,7 @@ export const createUserDB = async ({ name, email, active = true }) => {
     };
 
   } catch (err) {
-    throw handleDBError(err);
+    throw handleDBError(err, "Email already exists");
   }
 };
 
@@ -100,7 +101,7 @@ export const updateUserDB = async (id, { name, email, active }) => {
     const [result] = await db.query(query, params);
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     return {
@@ -147,7 +148,7 @@ export const patchUserDB = async (id, userData) => {
     const [result] = await db.query(query, params);
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     // Return the updated fields + ID
@@ -164,7 +165,7 @@ export const deleteUserDB = async (id) => {
     const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
-      throw new ValidationError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     return {
