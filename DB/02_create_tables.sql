@@ -39,9 +39,3 @@ CREATE TABLE task_tags (
     tag_id INT,
     PRIMARY KEY (task_id, tag_id)
 );
-
-CREATE TABLE tarefa_responsavel (
-    id_tarefa INT,
-    id_responsavel INT,
-    PRIMARY KEY (id_tarefa, id_responsavel)
-);

@@ -12,8 +12,7 @@ export const getTasks = async (req, res) => {
 
 // GET TASK BY ID
 export const getTaskById = async (req, res) => {
-  // Middleware checkTaskExists already fetched the task and stored it in req.task
-  res.json(req.task);
+  res.json(req.task); // middleware checkTaskExists já trouxe a task
 };
 
 // GET TASK STATS
@@ -22,7 +21,7 @@ export const getTaskStats = async (req, res) => {
   res.json(stats);
 };
 
-// POST TASK
+// CREATE TASK
 export const createTask = async (req, res) => {
   const newTask = await taskService.createTaskDB(req.body);
   res.status(201).json({
@@ -32,12 +31,22 @@ export const createTask = async (req, res) => {
   });
 };
 
-// PUT TASK
+// UPDATE TASK (PUT)
 export const updateTask = async (req, res) => {
   const updatedTask = await taskService.updateTaskDB(req.params.id, req.body);
   res.json({
     success: true,
     message: "Task updated",
+    task: updatedTask
+  });
+};
+
+// PATCH TASK
+export const patchTask = async (req, res) => {
+  const updatedTask = await taskService.updateTaskPartialDB(req.params.id, req.body);
+  res.json({
+    success: true,
+    message: "Task updated partially",
     task: updatedTask
   });
 };
@@ -50,15 +59,13 @@ export const deleteTask = async (req, res) => {
 
 // GET TASKS BY USER ID
 export const getTasksByUser = async (req, res) => {
-  const userId = req.params.id;
-  const tasks = await taskService.getTasksByUserDB(userId);
+  const tasks = await taskService.getTasksByUserDB(req.params.id);
   res.json(tasks);
 };
 
 // GET TAGS BY TASK ID
 export const getTagsByTask = async (req, res) => {
-  const taskId = req.params.id;
-  const tags = await taskService.getTagsByTaskDB(taskId);
+  const tags = await taskService.getTagsByTaskDB(req.params.id);
   res.json(tags);
 };
 
