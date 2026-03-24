@@ -1,5 +1,7 @@
-import { isEmpty } from "../utils/inputValidators.js";
-import * as taskService from "./taskService.js";
+
+import { db } from "../db.js";
+import { handleDBError } from "../utils/handleDBError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 
 // let tags = [
 //    { id: 1, name: "Urgent" },
@@ -7,38 +9,84 @@ import * as taskService from "./taskService.js";
 //    { id: 3, name: "Enhancement" },
 // ];
 
-// GET TAGS
-export const getAllTags = () => {
-  return [...tags];
-}
+// GET ALL TAGS
+export const getAllTagsDB = async ({ search = null, sort = null } = {}) => {
+  try {
+    let query = "SELECT * FROM tags";
+    const params = [];
+
+    if (search) {
+      query += " WHERE LOWER(name) LIKE ?";
+      params.push(`%${search.toLowerCase()}%`);
+    }
+
+    if (sort && ["asc", "desc"].includes(sort.toLowerCase())) {
+      query += ` ORDER BY name ${sort.toUpperCase()}`;
+    }
+
+    const [rows] = await db.query(query, params);
+    return rows;
+
+  } catch (err) {
+    handleDBError(err);
+  }
+};
 
 // GET TAG BY ID
-export const getTagById = (id) => {
-  return tags.find(t => t.id == id);
-}
+export const getTagByIdDB = async (id) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM tags WHERE id = ?",
+      [id]
+    );
 
-// POST TAG
-export const createTag = (tagData) => {
-    if (isEmpty(tagData.name)) {
-        throw new Error("Name is required");
+    return rows[0] || null;
+
+  } catch (err) {
+    handleDBError(err);
+  }
+};
+
+// CREATE TAG
+export const createTagDB = async ({ name }) => {
+  try {
+    if (!name) {
+      throw new ValidationError("Name is required");
     }
-    let nextId = generateNextId(tags);
-    const newTag = {
-        id: nextId,
-        name: tagData.name,
+
+    const [result] = await db.query(
+      "INSERT INTO tags (name) VALUES (?)",
+      [name]
+    );
+
+    return {
+      id: result.insertId,
+      name
     };
-    tags.push(newTag);
-    return newTag;
-}
+
+  } catch (err) {
+    handleDBError(err);
+  }
+};
 
 // DELETE TAG
-export const deleteTag = (id) => {
-  const tagToDelete = tags.find(u => u.id === id);
-  if (!tagToDelete) {
-    throw new Error("Tag not found");
+export const deleteTagDB = async (id) => {
+  try {
+    const [result] = await db.query(
+      "DELETE FROM tags WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("Tag not found");
+    }
+
+    return {
+      success: true,
+      message: "Tag deleted"
+    };
+
+  } catch (err) {
+    handleDBError(err);
   }
-  tags = tags.filter(u => u.id !== id);
-  // Remove associations in taskTags array
-  taskService.removeTagAssociations(id);
-  return tagToDelete;
-}
+};

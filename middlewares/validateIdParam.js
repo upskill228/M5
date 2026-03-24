@@ -5,6 +5,9 @@ export const validateIdParam = (req, res, next) => {
   if (!Number.isInteger(id) || id <= 0) {
     throw new ValidationError("Invalid ID parameter");
   }
+  
+  req.params.id = id; // substitute the string ID for the number ID, (so we don't have to convert it again in the controllers or services)
+
   next();
 };
 

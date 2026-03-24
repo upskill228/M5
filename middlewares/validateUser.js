@@ -1,5 +1,7 @@
 import { isEmpty, isValidEmail } from "../utils/inputValidators.js";
-import { ValidationError } from "../utils/validationError.js";
+import { ValidationError } from "../utils/ValidationError.js";
+
+/* **************Mudar validações que sejam quase iguais***************** */
 
 export const validateCreateUser = (req, res, next) => {
   const { name, email } = req.body;
@@ -8,8 +10,8 @@ export const validateCreateUser = (req, res, next) => {
     throw new ValidationError("Name is required");
   }
 
-  if (!isValidEmail(email)) {
-    throw new ValidationError("Invalid email");
+  if (isEmpty(email) || !isValidEmail(email)) {
+    throw new ValidationError("Valid email is required");
   }
 
   next();
@@ -22,8 +24,8 @@ export const validateUpdateUser = (req, res, next) => {
     throw new ValidationError("Name cannot be empty");
   }
 
-  if (email !== undefined && !isValidEmail(email)) {
-    throw new ValidationError("Invalid email");
+  if (email !== undefined && (isEmpty(email) || !isValidEmail(email))) {
+    throw new ValidationError("Valid email is required");
   }
 
   if (active !== undefined && typeof active !== "boolean") {

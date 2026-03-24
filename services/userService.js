@@ -1,6 +1,6 @@
 import { db } from "../db.js";
-import { handleDBError } from "../utils/dbErrorHandler.js";
-import { ValidationError } from "../utils/validationError.js";
+import { handleDBError } from "../utils/handleDBError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 
 // users = [
 //   { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },
@@ -124,7 +124,7 @@ export const updateUserDB = async (id, { name, email, active }) => {
 };
 
 // PATCH USER
-export const updateUserPartialDB = async (id, userData) => {
+export const patchUserDB = async (id, userData) => {
   try {
     const fields = [];
     const params = [];

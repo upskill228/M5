@@ -55,6 +55,13 @@ export const getTasksByUser = async (req, res) => {
   res.json(tasks);
 };
 
+// GET TAGS BY TASK ID
+export const getTagsByTask = async (req, res) => {
+  const taskId = req.params.id;
+  const tags = await taskService.getTagsByTaskDB(taskId);
+  res.json(tags);
+};
+
 /*
 Este taskController é utilizado na taskRoutes.js para lidar com as requisições relacionadas às tasks.
 O try and catch não são necessários aqui porque os erros são tratados nos serviços e propagados para os middlewares de erro.

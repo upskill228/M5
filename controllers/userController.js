@@ -44,7 +44,7 @@ export const updateUser = async (req, res) => {
 
 // PATCH
 export const patchUser = async (req, res) => {
-  const updatedUser = await userService.updateUserPartialDB(req.params.id, req.body);
+  const updatedUser = await userService.patchUserDB(req.params.id, req.body);
   res.json({
     success: true,
     message: "User updated partially",

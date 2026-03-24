@@ -1,6 +1,7 @@
 import { db } from "../db.js";
-import { handleDBError } from "../utils/dbErrorHandler.js";
-import { ValidationError } from "../utils/validationError.js";
+import { handleDBError } from "../utils/handleDBError.js";
+import { ValidationError } from "../utils/ValidationError.js";
+import { validateTagId } from "../middlewares/validateTagId.js";
 
 // let tasks = [
 //     { id: 1, title: "Study Node.js", category: "work", completed: false, responsibleName: "Daniel Moraes", completionDate: undefined},
@@ -210,6 +211,23 @@ export const getTasksByUserDB = async (userId) => {
     const [rows] = await db.query(
       "SELECT * FROM tasks WHERE user_id = ?",
       [userId]
+    );
+
+    return rows;
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// GET TAGS BY TASK ID
+export const getTagsByTaskDB = async (taskId) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT t.id, t.name 
+       FROM tags t
+       JOIN task_tags tt ON t.id = tt.tag_id
+       WHERE tt.task_id = ?`,
+      [taskId]
     );
 
     return rows;

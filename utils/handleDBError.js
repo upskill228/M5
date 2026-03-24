@@ -1,4 +1,4 @@
-import { ValidationError } from "./validationError.js";
+import { ValidationError } from "./ValidationError.js";
 
 export const handleDBError = (err) => {
   // UNIQUE constraint
@@ -10,7 +10,7 @@ export const handleDBError = (err) => {
   if (err.code === "ER_NO_REFERENCED_ROW_2") {
     throw new ValidationError("Invalid reference in another table");
   }
-
+  // Errors that aren't mapped are re-thrown
   throw err;
 };
 

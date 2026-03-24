@@ -8,6 +8,11 @@ export const isMinLength = (value, min) => {
   return value.trim().length >= min;
 };
 
+// Se value for undefined:
+// export const isMinLength = (value, min) => {
+//   return typeof value === "string" && value.trim().length >= min;
+// };
+
 // Validates email
 export const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

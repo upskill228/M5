@@ -13,7 +13,7 @@ export const getTags = async (req, res) => {
 // GET TAG BY ID
 export const getTagById = async (req, res) => {
   // Middleware checkTagExists already fetched the tag and stored it in req.tag
-  res.json(req.task);
+  res.json(req.tag);
 };
 
 // POST TAG

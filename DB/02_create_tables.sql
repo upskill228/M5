@@ -1,9 +1,9 @@
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
     active BOOLEAN DEFAULT TRUE,
-    created_date DATE DEFAULT (CURRENT_DATE)
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tasks (
@@ -11,18 +11,17 @@ CREATE TABLE tasks (
     title VARCHAR(150) NOT NULL,
     category VARCHAR(150) NOT NULL,
     completed BOOLEAN DEFAULT FALSE,
-    estado VARCHAR(50) DEFAULT 'pendente',
-    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    responsable_name INT,
-    completion_date DATETIME DEFAULT CURRENT_TIMESTAMP
+    user_id INT NOT NULL,
+    completion_date DATETIME NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_task INT,
-    id_user INT,
+    task_id INT NOT NULL,
+    user_id INT NOT NULL,
     content TEXT NOT NULL,
-    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tags (
@@ -35,10 +34,10 @@ CREATE TABLE tags (
 -- TABELAS N:M
 -- =========================
 
-CREATE TABLE task_tag (
-    id_tarefa INT,
-    id_etiqueta INT,
-    PRIMARY KEY (id_tarefa, id_etiqueta)
+CREATE TABLE task_tags (
+    task_id INT,
+    tag_id INT,
+    PRIMARY KEY (task_id, tag_id)
 );
 
 CREATE TABLE tarefa_responsavel (
