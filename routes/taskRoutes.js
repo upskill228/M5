@@ -4,7 +4,6 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import { validateIdParam } from "../middlewares/validateIdParam.js";
 import { checkTaskExists } from "../middlewares/checkTaskExists.js";
 import { checkUserExistsForTask } from "../middlewares/checkUserExistsForTask.js";
-import { validateSortParam } from "../utils/queryValidators.js";
 
 const router = express.Router();
 
@@ -16,7 +15,17 @@ router.put("/:id", validateIdParam, checkTaskExists, checkUserExistsForTask, asy
 router.patch("/:id", validateIdParam, checkTaskExists, checkUserExistsForTask, asyncHandler(taskController.patchTask));
 router.delete("/:id", validateIdParam, checkTaskExists, asyncHandler(taskController.deleteTask));
 router.get("/user/:id", asyncHandler(taskController.getTasksByUser));
-router.get("/:id/tags", asyncHandler(taskController.getTagsByTask));
+
+// TAGS
+router.get("/:id/tags", validateIdParam, checkTaskExists, asyncHandler(taskController.getTagsByTask));
+router.post("/:id/tags", validateIdParam, checkTaskExists, asyncHandler(taskController.addTagToTask));
+router.delete("/:id/tags", validateIdParam, checkTaskExists, asyncHandler(taskController.removeTagFromTask));
+
+// COMMENTS
+router.get("/:id/comments", validateIdParam, checkTaskExists, asyncHandler(taskController.getCommentsByTask));
+router.post("/:id/comments", validateIdParam, checkTaskExists, asyncHandler(taskController.createComment));
+router.put("/:id/comments/:commentId", validateIdParam, asyncHandler(taskController.updateComment));
+router.delete("/:id/comments/:commentId", validateIdParam, asyncHandler(taskController.deleteComment));
 
 export default router;
 

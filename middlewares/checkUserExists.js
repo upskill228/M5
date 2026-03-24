@@ -1,5 +1,5 @@
 import { asyncHandler } from "./asyncHandler.js";
-import { ValidationError } from "../utils/validationError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 import * as userService from "../services/userService.js";
 
 export const checkUserExists = asyncHandler(async (req, res, next) => {

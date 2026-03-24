@@ -1,45 +1,85 @@
-import { isEmpty, generateNextId } from "../utils/inputValidators.js";
-import * as taskService from "./taskService.js";
-import * as userService from "./userService.js";
+import { db } from "../db.js";
+import { handleDBError } from "../utils/handleDBError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 
-// POST COMMENT
-export const createComment = (taskId, commentData) => {
-  const task = taskService.getTaskById(taskId);
-  if (!task) {
-    throw new Error("Task not found");
-  }
-  
-  const user = userService.getUserById(commentData.userId);
-  if (!user) {
-    throw new Error("User not found");
-  }
+// CREATE COMMENT
+export const createCommentDB = async ({ task_id, user_id, content }) => {
+  try {
+    const [result] = await db.query(
+      "INSERT INTO comments (task_id, user_id, content) VALUES (?, ?, ?)",
+      [task_id, user_id, content]
+    );
 
-  if (isEmpty(commentData.content)) {
-    throw new Error("Content is required");
-  }
-
-  let nextId = generateNextId(comments);
-
-    const newComment = {    
-      id: nextId,
-      taskId: taskId,
-      userId: commentData.userId,
-      content: commentData.content,
-      creationDate: new Date()
+    return {
+      id: result.insertId,
+      task_id,
+      user_id,
+      content,
+      created_at: new Date()
     };
-    comments.push(newComment);
-    return newComment;
-}
 
-// GET COMMENTS BY TASK ID
-export const getCommentsByTaskId = (taskId) => {
-  const taskComments = comments.filter(c => c.taskId == taskId);
-  return taskComments.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+  } catch (err) {
+    throw handleDBError(err);
+  }
 };
 
-// REMOVE COMMENTS BY TASK ID
-export const removeCommentsByTaskId = (taskId) => {
-  const removedCount = comments.filter(c => c.taskId == taskId).length;
-  comments = comments.filter(c => c.taskId !== taskId);
-  return removedCount;
+// GET COMMENTS BY TASK ID
+export const getCommentsByTaskDB = async (taskId) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM comments WHERE task_id = ? ORDER BY created_at DESC",
+      [taskId]
+    );
+    return rows;
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// UPDATE COMMENT
+export const updateCommentDB = async (id, { content }) => {
+  try {
+    if (!content) {
+      throw new ValidationError("Content is required");
+    }
+
+    const [result] = await db.query(
+      "UPDATE comments SET content = ? WHERE id = ?",
+      [content, id]
+    );
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("Comment not found");
+    }
+
+    return {
+      id,
+      content
+    };
+
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// DELETE COMMENT
+export const deleteCommentDB = async (id) => {
+  try {
+    const [result] = await db.query(
+      "DELETE FROM comments WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("Comment not found");
+    }
+
+    return {
+      success: true,
+      message: "Comment deleted"
+    };
+
+  } catch (err) {
+    throw handleDBError(err);
+  }
 };

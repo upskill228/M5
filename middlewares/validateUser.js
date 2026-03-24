@@ -1,18 +1,36 @@
-import { isEmpty, isValidEmail } from "../utils/inputValidators.js";
+import { isBlank, isValidEmail, isBoolean } from "../utils/inputValidators.js";
 import { ValidationError } from "../utils/ValidationError.js";
 
-/* **************Mudar validações que sejam quase iguais***************** */
+// Funções auxiliares para validação de campos individuais
+const validateName = (name, isRequired = true) => {
+  if (isRequired && isBlank(name)) {
+    throw new ValidationError("Name is required");
+  }
+  if (!isRequired && name !== undefined && isBlank(name)) {
+    throw new ValidationError("Name cannot be empty");
+  }
+};
+
+const validateEmail = (email, isRequired = true) => {
+  if (isRequired && (isBlank(email) || !isValidEmail(email))) {
+    throw new ValidationError("Valid email is required");
+  }
+  if (!isRequired && email !== undefined && (isBlank(email) || !isValidEmail(email))) {
+    throw new ValidationError("Valid email is required");
+  }
+};
+
+const validateActive = (active) => {
+  if (active !== undefined && !isBoolean(active)) {
+    throw new ValidationError("Active must be a boolean");
+  }
+};
 
 export const validateCreateUser = (req, res, next) => {
   const { name, email } = req.body;
 
-  if (isEmpty(name)) {
-    throw new ValidationError("Name is required");
-  }
-
-  if (isEmpty(email) || !isValidEmail(email)) {
-    throw new ValidationError("Valid email is required");
-  }
+  validateName(name, true);
+  validateEmail(email, true);
 
   next();
 };
@@ -20,17 +38,9 @@ export const validateCreateUser = (req, res, next) => {
 export const validateUpdateUser = (req, res, next) => {
   const { name, email, active } = req.body;
 
-  if (name !== undefined && isEmpty(name)) {
-    throw new ValidationError("Name cannot be empty");
-  }
-
-  if (email !== undefined && (isEmpty(email) || !isValidEmail(email))) {
-    throw new ValidationError("Valid email is required");
-  }
-
-  if (active !== undefined && typeof active !== "boolean") {
-    throw new ValidationError("Active must be a boolean");
-  }
+  validateName(name, false);
+  validateEmail(email, false);
+  validateActive(active);
 
   next();
 };

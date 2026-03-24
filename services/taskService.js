@@ -1,3 +1,56 @@
+import { db } from "../db.js";
+import { handleDBError } from "../utils/handleDBError.js";
+import { ValidationError } from "../utils/ValidationError.js";
+
+// GET ALL TASKS
+export const getAllTasksDB = async ({ search = null, sort = null } = {}) => {
+  try {
+    let query = "SELECT * FROM tasks";
+    const params = [];
+
+    if (search) {
+      query += " WHERE LOWER(title) LIKE ?";
+      params.push(`%${search.toLowerCase()}%`);
+    }
+
+    if (sort && ["asc", "desc"].includes(sort.toLowerCase())) {
+      query += ` ORDER BY title ${sort.toUpperCase()}`;
+    }
+
+    const [rows] = await db.query(query, params);
+    return rows;
+
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// GET TASK BY ID
+export const getTaskById = async (id) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM tasks WHERE id = ?", [id]);
+    return rows[0] || null;
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// GET TASK STATS
+export const getTaskStatsDB = async () => {
+  try {
+    const [totalResult] = await db.query("SELECT COUNT(*) AS total FROM tasks");
+    const [completedResult] = await db.query("SELECT COUNT(*) AS completed FROM tasks WHERE completed = true");
+
+    const total = totalResult[0].total;
+    const completed = completedResult[0].completed;
+    const completedPercentage = total > 0 ? Number(((completed / total) * 100).toFixed(2)) : 0;
+
+    return { total, completed, completedPercentage };
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
 // CREATE TASK
 export const createTaskDB = async ({ title, category, completed = false, user_id, completion_date }) => {
   try {
@@ -90,6 +143,90 @@ export const getTasksByUserDB = async (userId) => {
       [userId]
     );
     return rows;
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// DELETE TASK
+export const deleteTaskDB = async (id) => {
+  try {
+    const [result] = await db.query("DELETE FROM tasks WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("Task not found");
+    }
+
+    return {
+      success: true,
+      message: "Task deleted"
+    };
+
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// GET TAGS BY TASK
+export const getTagsByTaskDB = async (taskId) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT t.* FROM tags t INNER JOIN task_tags tt ON t.id = tt.tag_id WHERE tt.task_id = ?",
+      [taskId]
+    );
+    return rows;
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// ADD TAG TO TASK
+export const addTagToTaskDB = async (taskId, tagId) => {
+  try {
+    // Check if association already exists
+    const [existing] = await db.query(
+      "SELECT * FROM task_tags WHERE task_id = ? AND tag_id = ?",
+      [taskId, tagId]
+    );
+
+    if (existing.length > 0) {
+      throw new ValidationError("Tag is already associated with this task");
+    }
+
+    const [result] = await db.query(
+      "INSERT INTO task_tags (task_id, tag_id) VALUES (?, ?)",
+      [taskId, tagId]
+    );
+
+    return {
+      taskId,
+      tagId
+    };
+
+  } catch (err) {
+    throw handleDBError(err);
+  }
+};
+
+// REMOVE TAG FROM TASK
+export const removeTagFromTaskDB = async (taskId, tagId) => {
+  try {
+    const [result] = await db.query(
+      "DELETE FROM task_tags WHERE task_id = ? AND tag_id = ?",
+      [taskId, tagId]
+    );
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("Association not found");
+    }
+
+    return {
+      success: true,
+      message: "Tag removed from task",
+      taskId,
+      tagId
+    };
+
   } catch (err) {
     throw handleDBError(err);
   }

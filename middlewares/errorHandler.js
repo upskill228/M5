@@ -1,4 +1,4 @@
-import { ValidationError } from "../utils/validationError.js";
+import { ValidationError } from "../utils/ValidationError.js";
 
 export const errorHandler = (err, req, res, next) => {
   console.error(err); // 👈 importante para debug

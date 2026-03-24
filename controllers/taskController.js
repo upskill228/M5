@@ -1,5 +1,5 @@
 import * as taskService from "../services/taskService.js";
-import { validateSortParam } from "../utils/queryValidators.js";
+import * as commentService from "../services/commentService.js";
 
 // GET ALL TASKS
 export const getTasks = async (req, res) => {

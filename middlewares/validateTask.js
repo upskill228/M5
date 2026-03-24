@@ -1,10 +1,10 @@
-import { isEmpty } from "../utils/inputValidators.js";
-import { ValidationError } from "../utils/validationError.js";
+import { isBlank } from "../utils/inputValidators.js";
+import { ValidationError } from "../utils/ValidationError.js";
 
 export const validateCreateTask = (req, res, next) => {
   const { title, user_id } = req.body;
 
-  if (isEmpty(title)) {
+  if (isBlank(title)) {
     throw new ValidationError("Title is required");
   }
 
@@ -18,7 +18,7 @@ export const validateCreateTask = (req, res, next) => {
 export const validateUpdateTask = (req, res, next) => {
   const { title, description, user_id } = req.body;
 
-  if (title !== undefined && isEmpty(title)) {
+  if (title !== undefined && isBlank(title)) {
     throw new ValidationError("Title cannot be empty");
   }
 

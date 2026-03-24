@@ -22,7 +22,7 @@ export const getAllTagsDB = async ({ search = null, sort = null } = {}) => {
     return rows;
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
   }
 };
 
@@ -37,7 +37,22 @@ export const getTagByIdDB = async (id) => {
     return rows[0] || null;
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
+  }
+};
+
+// Alias for middleware compatibility
+export const getTagById = getTagByIdDB;
+
+// GET TAG STATS
+export const getTagStatsDB = async () => {
+  try {
+    const [totalResult] = await db.query("SELECT COUNT(*) AS total FROM tags");
+    const total = totalResult[0].total;
+
+    return { total };
+  } catch (err) {
+    throw handleDBError(err);
   }
 };
 
@@ -59,7 +74,41 @@ export const createTagDB = async ({ name }) => {
     };
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
+  }
+};
+
+// UPDATE TAG
+export const updateTagDB = async (id, { name }) => {
+  try {
+    if (name !== undefined && !name) {
+      throw new ValidationError("Name cannot be empty");
+    }
+
+    const fields = [];
+    const params = [];
+
+    if (name !== undefined) { 
+      fields.push("name = ?"); 
+      params.push(name); 
+    }
+
+    if (fields.length === 0) {
+      throw new ValidationError("No fields provided to update");
+    }
+
+    params.push(id);
+    const query = `UPDATE tags SET ${fields.join(", ")} WHERE id = ?`;
+    const [result] = await db.query(query, params);
+
+    if (result.affectedRows === 0) {
+      throw new ValidationError("Tag not found");
+    }
+
+    return { id, name };
+
+  } catch (err) {
+    throw handleDBError(err);
   }
 };
 
@@ -81,6 +130,6 @@ export const deleteTagDB = async (id) => {
     };
 
   } catch (err) {
-    handleDBError(err);
+    throw handleDBError(err);
   }
 };
