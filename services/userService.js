@@ -1,6 +1,6 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/dbErrorHandler.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { ValidationError } from "../utils/validationError.js";
 
 // users = [
 //   { id: 1, name: "Ana Silva", email: "ana@email.com", active: true },

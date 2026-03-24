@@ -1,5 +1,5 @@
 import { isEmpty } from "../utils/inputValidators.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { ValidationError } from "../utils/validationError.js";
 
 export const validateCreateTag = (req, res, next) => {
   const { name } = req.body;

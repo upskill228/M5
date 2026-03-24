@@ -1,5 +1,5 @@
 import { isEmpty, isValidEmail } from "../utils/inputValidators.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { ValidationError } from "../utils/validationError.js";
 
 export const validateCreateUser = (req, res, next) => {
   const { name, email } = req.body;

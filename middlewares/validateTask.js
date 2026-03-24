@@ -1,5 +1,5 @@
 import { isEmpty } from "../utils/inputValidators.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { ValidationError } from "../utils/validationError.js";
 
 export const validateCreateTask = (req, res, next) => {
   const { title, user_id } = req.body;

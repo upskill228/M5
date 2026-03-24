@@ -1,6 +1,6 @@
 import { db } from "../db.js";
 import { handleDBError } from "../utils/dbErrorHandler.js";
-import { ValidationError } from "../utils/ValidationError.js";
+import { ValidationError } from "../utils/validationError.js";
 
 // let tasks = [
 //     { id: 1, title: "Study Node.js", category: "work", completed: false, responsibleName: "Daniel Moraes", completionDate: undefined},

@@ -1,4 +1,4 @@
-import { ValidationError } from "./ValidationError.js";
+import { ValidationError } from "./validationError.js";
 
 export const validateSortParam = (sort, allowed = ["asc", "desc"]) => {
   if (sort && !allowed.includes(sort.toLowerCase())) {

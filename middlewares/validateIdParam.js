@@ -1,4 +1,4 @@
-import { ValidationError } from "../utils/ValidationError.js";
+import { ValidationError } from "../utils/validationError.js";
 
 export const validateIdParam = (req, res, next) => {
   const id = Number(req.params.id);

@@ -1,4 +1,4 @@
-import { ValidationError } from "./ValidationError.js";
+import { ValidationError } from "./validationError.js";
 
 export const handleDBError = (err) => {
   // UNIQUE constraint
