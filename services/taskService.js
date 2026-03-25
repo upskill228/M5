@@ -126,7 +126,13 @@ export const updateTaskDB = async (id, { title, category, completed, user_id, co
       throw new NotFoundError("Task not found");
     }
 
-    return { id, title, category, completed, user_id, completion_date };
+    // Get the updated task from the database
+    const [rows] = await db.query(
+      "SELECT * FROM tasks WHERE id = ?",
+      [id]
+    );
+
+    return rows[0];
 
   } catch (err) {
     throw handleDBError(err);

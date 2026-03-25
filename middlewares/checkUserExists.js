@@ -5,7 +5,7 @@ import * as userService from "../services/userService.js";
 export const checkUserExists = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
 
-  const user = await userService.getUserById(userId);
+  const user = await userService.getUserByIdDB(userId);
 
   if (!user) {
     throw new NotFoundError("User not found");

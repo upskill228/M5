@@ -32,7 +32,7 @@ export const getAllUsersDB = async ({ search = null, sort = null } = {}) => {
 };
 
 // GET USER BY ID
-export const getUserById = async (id) => {
+export const getUserByIdDB = async (id) => {
   try {
     const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
     return rows[0] || null;
@@ -101,12 +101,13 @@ export const updateUserDB = async (id, { name, email, active }) => {
       throw new NotFoundError("User not found");
     }
 
-    return {
-      id,
-      name,
-      email,
-      active
-    };
+    // Get the updated user from the database
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE id = ?",
+      [id]
+    );
+
+    return rows[0];
 
   } catch (err) {
     throw handleDBError(err);
@@ -114,8 +115,8 @@ export const updateUserDB = async (id, { name, email, active }) => {
 };
 
 /*
-patchUserDB usa spread operator { id, ...userData }, retornando apenas os campos enviados + id.
-updateUserDB retorna todos os campos possíveis, mesmo que não tenham sido alterados.
+updateUserDB (PUT) retorna o objeto completo da base de dados após atualização.
+patchUserDB (PATCH) retorna apenas os campos enviados + id (atualização parcial).
 */
 
 // PATCH USER
