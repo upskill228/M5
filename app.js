@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
+import cors from "cors";
 import { db } from "./db.js";
 
 import userRoutes from "./routes/userRoutes.js";
@@ -16,6 +17,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors({ origin: "http://127.0.0.1:5500" }));
 app.use(logger);
 
 // Routes
